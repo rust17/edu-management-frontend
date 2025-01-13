@@ -1,35 +1,28 @@
 @import './base.css';
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+/* 全局样式 */
+.page-container {
+  padding: 20px;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+/* 常用辅助类 */
+.text-center {
+  text-align: center;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+.text-right {
+  text-align: right;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+/* 响应式布局辅助类 */
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
   }
 }
