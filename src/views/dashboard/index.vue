@@ -7,7 +7,11 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const userRole = computed(() => userStore.userInfo?.role)
-const userName = computed(() => userStore.userInfo?.name)
+const userName = computed(() => {
+  let role = userStore.userInfo?.role || ''
+  let displayRole = { teacher: '老师', student: '同学' }[role] || ''
+  return userStore.userInfo?.name + ' ' + displayRole
+})
 
 // 统计数据（实际项目中应该从API获取）
 const stats = computed(() => {
