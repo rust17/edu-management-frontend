@@ -2,9 +2,10 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-import { ElMessage } from 'element-plus'
 import { User, Lock, Reading, Money, DataAnalysis } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import request from '@/http/request'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -43,22 +44,25 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
     if (valid) {
       loading.value = true
       try {
-        // 这里应该调用实际的登录 API
-        // 模拟登录成功
-        const token = 'mock_token'
-        const userInfo = {
-          id: 1,
-          name: loginForm.role === 'teacher' ? '张老师' : '李同学',
+        const response = await request.post('/login', {
+          email: loginForm.username,
+          password: loginForm.password,
           role: loginForm.role
-        }
+        })
 
-        userStore.setToken(token)
-        userStore.setUserInfo(userInfo)
+        const { data, message } = response.data
 
-        // 根据角色跳转到不同的首页
+        ElMessage.success(message)
+        userStore.setToken(data.access_token)
+        userStore.setUserInfo({
+          id: data.user.id,
+          name: data.user.name,
+          role: data.user.role
+        })
+
         router.push('/')
       } catch (error) {
-        ElMessage.error('登录失败，请重试')
+        // 错误已经被拦截器处理，这里可以不用做额外处理
       } finally {
         loading.value = false
       }

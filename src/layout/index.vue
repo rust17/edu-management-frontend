@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import request from '@/http/request'
+import { ElMessage } from 'element-plus'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -50,9 +52,15 @@ const menuItems = computed(() => {
   return []
 })
 
-const handleLogout = () => {
-  userStore.logout()
-  router.push('/login')
+const handleLogout = async () => {
+  try {
+    await request.post('/logout')
+    userStore.logout()
+    ElMessage.success('已成功登出')
+    router.push('/login')
+  } catch (error) {
+    // 错误已经被拦截器处理，这里不需要额外处理
+  }
 }
 </script>
 
