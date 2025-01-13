@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
+import request from '@/http/request'
+import { courseEndpoints } from '@/http/endpoints/course'
 
 const router = useRouter()
 const route = useRoute()
@@ -12,24 +14,20 @@ const showPayDialog = ref(route.query.action === 'pay')
 interface CourseDetail {
   id: number
   name: string
-  month: string
-  fee: number
-  teacherName: string
-  billStatus: 'pending' | 'paid'
-  sendTime?: string
-  payTime?: string
+  year_month: string
+  fee: string
+  teacher_id: number
+  teacher: {
+    id: number
+    name: string
+  }
+  invoice_status: 'pending' | 'paid' | 'failed'
+  invoice_send_at: string
+  paid_at: string
 }
 
 const loading = ref(false)
-const courseDetail = ref<CourseDetail>({
-  id: 1,
-  name: '高中数学',
-  month: '2024-03',
-  fee: 500,
-  teacherName: '张老师',
-  billStatus: 'pending',
-  sendTime: '2024-03-01 10:00:00'
-})
+const courseDetail = ref<CourseDetail | null>(null)
 
 // 支付相关
 const payMethod = ref('wechat')
@@ -39,10 +37,14 @@ const payLoading = ref(false)
 const fetchCourseDetail = async () => {
   loading.value = true
   try {
-    // 这里应该调用获取课程详情的 API
-    // 使用模拟数据
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const response = await request({
+      url: courseEndpoints.studentDetail(Number(courseId)),
+      method: 'get'
+    })
+
+    courseDetail.value = response.data.data
   } catch (error) {
+    console.error('获取课程信息失败:', error)
     ElMessage.error('获取课程信息失败')
   } finally {
     loading.value = false
@@ -63,7 +65,7 @@ const handlePay = () => {
 const confirmPay = async () => {
   try {
     await ElMessageBox.confirm(
-      `确认使用${payMethod.value === 'wechat' ? '微信支付' : '支付宝'}支付 ¥${courseDetail.value.fee}？`,
+      `确认使用${payMethod.value === 'wechat' ? '微信支付' : '支付宝'}支付 ¥${courseDetail.value?.fee}？`,
       '确认支付',
       {
         confirmButtonText: '确认',
@@ -91,7 +93,7 @@ const confirmPay = async () => {
 }
 
 // 获取账单状态显示
-const getBillStatusTag = (status: CourseDetail['billStatus']) => {
+const getBillStatusTag = (status: CourseDetail['invoice_status']) => {
   const statusMap = {
     pending: {
       type: 'warning',
@@ -100,6 +102,10 @@ const getBillStatusTag = (status: CourseDetail['billStatus']) => {
     paid: {
       type: 'success',
       label: '已支付'
+    },
+    failed: {
+      type: 'danger',
+      label: '支付失败'
     }
   }
   return statusMap[status]
@@ -123,7 +129,7 @@ onMounted(() => {
       </div>
       <div class="header-actions">
         <el-button
-          v-if="courseDetail.billStatus === 'pending'"
+          v-if="courseDetail?.invoice_status === 'pending'"
           type="primary"
           @click="handlePay"
         >
@@ -133,15 +139,15 @@ onMounted(() => {
     </div>
 
     <!-- 基本信息 -->
-    <el-card class="info-card">
+    <el-card class="info-card" v-if="courseDetail">
       <template #header>
         <div class="card-header">
           <h3>基本信息</h3>
           <el-tag
-            :type="getBillStatusTag(courseDetail.billStatus).type"
+            :type="getBillStatusTag(courseDetail.invoice_status).type"
             size="small"
           >
-            {{ getBillStatusTag(courseDetail.billStatus).label }}
+            {{ getBillStatusTag(courseDetail.invoice_status).label }}
           </el-tag>
         </div>
       </template>
@@ -150,19 +156,19 @@ onMounted(() => {
           {{ courseDetail.name }}
         </el-descriptions-item>
         <el-descriptions-item label="年月">
-          {{ courseDetail.month }}
+          {{ courseDetail.year_month }}
         </el-descriptions-item>
         <el-descriptions-item label="任课教师">
-          {{ courseDetail.teacherName }}
+          {{ courseDetail.teacher.name }}
         </el-descriptions-item>
         <el-descriptions-item label="课程费用">
           <span class="price">¥{{ courseDetail.fee }}</span>
         </el-descriptions-item>
         <el-descriptions-item label="账单发送时间">
-          {{ courseDetail.sendTime || '-' }}
+          {{ courseDetail.invoice_send_at || '-' }}
         </el-descriptions-item>
         <el-descriptions-item label="支付时间">
-          {{ courseDetail.payTime || '-' }}
+          {{ courseDetail.paid_at || '-' }}
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
@@ -174,10 +180,10 @@ onMounted(() => {
       width="400px"
       :close-on-click-modal="false"
     >
-      <div class="pay-info">
+      <div class="pay-info" v-if="courseDetail">
         <div class="info-row">
           <label>课程</label>
-          <span>{{ courseDetail.name }} ({{ courseDetail.month }})</span>
+          <span>{{ courseDetail.name }} ({{ courseDetail.year_month }})</span>
         </div>
         <div class="info-row">
           <label>金额</label>

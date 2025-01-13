@@ -8,5 +8,5 @@
   }
 */
 export const SUCCESS = 0 // 操作成功
-export const TOKEN_EXPIRED = 1 // token 过期或无效
+export const TOKEN_EXPIRED = 1 // token 过期或无效、一般错误
 export const LOGIN_FAILED = 2 // 登录失败

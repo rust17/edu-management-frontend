@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
+import request from '@/http/request'
+import { invoiceEndpoints } from '@/http/endpoints/invoice'
 
 const router = useRouter()
 const route = useRoute()
@@ -11,28 +13,23 @@ const showPayDialog = ref(route.query.action === 'pay')
 
 interface BillDetail {
   id: number
-  courseName: string
-  courseMonth: string
-  teacherName: string
-  fee: number
-  status: 'pending' | 'paid'
-  billNo: string
-  sendTime: string
-  payTime?: string
-  payMethod?: 'wechat' | 'alipay'
+  course_id: number
+  student_id: number
+  amount: string
+  status: 'pending' | 'paid' | 'failed'
+  no: string
+  send_at: string
+  paid_at: string
+  course: {
+    id: number
+    name: string
+    year_month: string
+    teacher_name: string
+  }
 }
 
 const loading = ref(false)
-const billDetail = ref<BillDetail>({
-  id: 1,
-  courseName: '高中数学',
-  courseMonth: '2024-03',
-  teacherName: '张老师',
-  fee: 500,
-  status: 'pending',
-  billNo: 'BILL20240301001',
-  sendTime: '2024-03-01 10:00:00'
-})
+const billDetail = ref<BillDetail | null>(null)
 
 // 支付相关
 const payMethod = ref('wechat')
@@ -42,11 +39,14 @@ const payLoading = ref(false)
 const fetchBillDetail = async () => {
   loading.value = true
   try {
-    // 这里应该调用获取账单详情的 API
-    // 使用模拟数据
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const response = await request({
+      url: invoiceEndpoints.studentDetail(Number(billId)),
+      method: 'get'
+    })
+
+    billDetail.value = response.data.data
   } catch (error) {
-    ElMessage.error('获取账单信息失败')
+    console.error('获取账单信息失败:', error)
   } finally {
     loading.value = false
   }
@@ -66,7 +66,7 @@ const handlePay = () => {
 const confirmPay = async () => {
   try {
     await ElMessageBox.confirm(
-      `确认使用${payMethod.value === 'wechat' ? '微信支付' : '支付宝'}支付 ¥${billDetail.value.fee}？`,
+      `确认使用${payMethod.value === 'wechat' ? '微信支付' : '支付宝'}支付 ¥${billDetail.value?.amount}？`,
       '确认支付',
       {
         confirmButtonText: '确认',
@@ -103,6 +103,10 @@ const getBillStatusTag = (status: BillDetail['status']) => {
     paid: {
       type: 'success',
       label: '已支付'
+    },
+    failed: {
+      type: 'danger',
+      label: '支付失败'
     }
   }
   return statusMap[status]
@@ -126,7 +130,7 @@ onMounted(() => {
       </div>
       <div class="header-actions">
         <el-button
-          v-if="billDetail.status === 'pending'"
+          v-if="billDetail?.status === 'pending'"
           type="primary"
           @click="handlePay"
         >
@@ -136,7 +140,7 @@ onMounted(() => {
     </div>
 
     <!-- 基本信息 -->
-    <el-card class="info-card">
+    <el-card class="info-card" v-if="billDetail">
       <template #header>
         <div class="card-header">
           <h3>账单信息</h3>
@@ -150,28 +154,22 @@ onMounted(() => {
       </template>
       <el-descriptions :column="2">
         <el-descriptions-item label="账单编号">
-          {{ billDetail.billNo }}
+          {{ billDetail.no || '-' }}
         </el-descriptions-item>
         <el-descriptions-item label="账单金额">
-          <span class="price">¥{{ billDetail.fee }}</span>
+          <span class="price">¥{{ billDetail.amount }}</span>
         </el-descriptions-item>
         <el-descriptions-item label="发送时间">
-          {{ billDetail.sendTime }}
+          {{ billDetail.send_at }}
         </el-descriptions-item>
         <el-descriptions-item label="支付时间">
-          {{ billDetail.payTime || '-' }}
-        </el-descriptions-item>
-        <el-descriptions-item
-          v-if="billDetail.status === 'paid'"
-          label="支付方式"
-        >
-          {{ billDetail.payMethod === 'wechat' ? '微信支付' : '支付宝' }}
+          {{ billDetail.paid_at || '-' }}
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
 
     <!-- 课程信息 -->
-    <el-card class="course-card">
+    <el-card class="course-card" v-if="billDetail">
       <template #header>
         <div class="card-header">
           <h3>课程信息</h3>
@@ -179,13 +177,13 @@ onMounted(() => {
       </template>
       <el-descriptions :column="2">
         <el-descriptions-item label="课程名称">
-          {{ billDetail.courseName }}
+          {{ billDetail.course.name }}
         </el-descriptions-item>
         <el-descriptions-item label="课程年月">
-          {{ billDetail.courseMonth }}
+          {{ billDetail.course.year_month }}
         </el-descriptions-item>
         <el-descriptions-item label="任课教师">
-          {{ billDetail.teacherName }}
+          {{ billDetail.course.teacher_name }}
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
@@ -197,18 +195,18 @@ onMounted(() => {
       width="400px"
       :close-on-click-modal="false"
     >
-      <div class="pay-info">
+      <div class="pay-info" v-if="billDetail">
         <div class="info-row">
           <label>账单编号</label>
-          <span>{{ billDetail.billNo }}</span>
+          <span>{{ billDetail.no || '-' }}</span>
         </div>
         <div class="info-row">
           <label>课程</label>
-          <span>{{ billDetail.courseName }} ({{ billDetail.courseMonth }})</span>
+          <span>{{ billDetail.course.name }} ({{ billDetail.course.year_month }})</span>
         </div>
         <div class="info-row">
           <label>金额</label>
-          <span class="price">¥{{ billDetail.fee }}</span>
+          <span class="price">¥{{ billDetail.amount }}</span>
         </div>
       </div>
 

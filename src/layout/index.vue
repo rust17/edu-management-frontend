@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import request from '@/http/request'
 import { ElMessage } from 'element-plus'
+import { authEndpoints } from '@/http/endpoints/auth'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -54,7 +55,7 @@ const menuItems = computed(() => {
 
 const handleLogout = async () => {
   try {
-    await request.post('/logout')
+    await request.post(authEndpoints.logout)
     userStore.logout()
     ElMessage.success('已成功登出')
     router.push('/login')

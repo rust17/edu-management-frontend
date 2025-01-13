@@ -6,6 +6,7 @@ import { User, Lock, Reading, Money, DataAnalysis } from '@element-plus/icons-vu
 import type { FormInstance, FormRules } from 'element-plus'
 import request from '@/http/request'
 import { ElMessage } from 'element-plus'
+import { authEndpoints } from '@/http/endpoints/auth'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -44,7 +45,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
     if (valid) {
       loading.value = true
       try {
-        const response = await request.post('/login', {
+        const response = await request.post(authEndpoints.login, {
           email: loginForm.username,
           password: loginForm.password,
           role: loginForm.role

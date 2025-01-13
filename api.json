@@ -1,1705 +1,3652 @@
 {
-    "openapi": "3.0.1",
-    "info": {
-      "title": "POPER",
-      "description": "",
-      "version": "1.0.0"
-    },
-    "tags": [],
-    "paths": {
-      "/api/login": {
-        "post": {
-          "summary": "登录",
-          "deprecated": false,
-          "description": "",
-          "tags": [],
-          "parameters": [],
-          "requestBody": {
+  "openapi": "3.0.1",
+  "info": {
+    "title": "POPER",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/api/login": {
+      "post": {
+        "summary": "登录",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "邮箱"
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "密码"
+                  },
+                  "role": {
+                    "type": "string",
+                    "description": "登录角色: teacher、student"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password",
+                  "role"
+                ]
+              },
+              "example": {
+                "email": "reggie09@example.org",
+                "password": "password",
+                "role": "teacher"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "email": {
-                      "type": "string",
-                      "description": "邮箱"
+                    "code": {
+                      "type": "integer",
+                      "description": "业务码 0 代表成功，非 0 表示失败"
                     },
-                    "password": {
-                      "type": "string",
-                      "description": "密码"
+                    "message": {
+                      "type": "string"
                     },
-                    "role": {
-                      "type": "string",
-                      "description": "登录角色: teacher、student"
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "access_token": {
+                          "type": "string",
+                          "description": "bearer token"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "description": "token 类型"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "用户id"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "用户姓名"
+                            },
+                            "email": {
+                              "type": "string",
+                              "description": "用户邮箱"
+                            },
+                            "role": {
+                              "type": "string",
+                              "description": "用户角色"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "email",
+                            "role"
+                          ],
+                          "description": "登录用户信息"
+                        }
+                      },
+                      "required": [
+                        "access_token",
+                        "token_type",
+                        "user"
+                      ]
                     }
                   },
                   "required": [
-                    "email",
-                    "password",
-                    "role"
+                    "code",
+                    "message",
+                    "data"
                   ]
                 },
-                "example": {
-                  "email": "reggie09@example.org",
-                  "password": "password",
-                  "role": "teacher"
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "integer",
-                        "description": "业务码 0 代表成功，非 0 表示失败"
-                      },
-                      "message": {
-                        "type": "string"
-                      },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "登录成功",
                       "data": {
-                        "type": "object",
-                        "properties": {
-                          "access_token": {
-                            "type": "string",
-                            "description": "bearer token"
-                          },
-                          "token_type": {
-                            "type": "string",
-                            "description": "token 类型"
-                          },
-                          "user": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer",
-                                "description": "用户id"
-                              },
-                              "name": {
-                                "type": "string",
-                                "description": "用户姓名"
-                              },
-                              "email": {
-                                "type": "string",
-                                "description": "用户邮箱"
-                              },
-                              "role": {
-                                "type": "string",
-                                "description": "用户角色"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name",
-                              "email",
-                              "role"
-                            ],
-                            "description": "登录用户信息"
-                          }
-                        },
-                        "required": [
-                          "access_token",
-                          "token_type",
-                          "user"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "code",
-                      "message",
-                      "data"
-                    ]
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Success",
-                      "value": {
-                        "code": 0,
-                        "message": "登录成功",
-                        "data": {
-                          "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNWE3YWE4ZmFmZmMzZTA0Y2VhYmQwYTNjYjQwNGE2NDk4MzkzYzI2MmYwYWRjZTY2Y2NlYzhkY2E1NmE5OWFjYWU5Nzk4ZjcwNzZmZjI4MjgiLCJpYXQiOjE3MzY2ODU4NzQuNDk4MDI5LCJuYmYiOjE3MzY2ODU4NzQuNDk4MDM0LCJleHAiOjE3NTIzMjQyNzQuNDc0Mzg0LCJzdWIiOiIxNiIsInNjb3BlcyI6W119.nI1Vm689YGwu38YrfG2PGEJzrBPxyjY8x5lnp8kXEIMPiShPnY36mQmW45b7Vza5X57FTp7bi3RvWSOZQu7mZgxCcu0Jhcoqi3_uXwlLamWHLBUO5BwWXExQRfbxa85DQi46Bs9ytoCs0WslYUCcEYR1WbObEYlj5wnOFOwTJP-6utSMQAWxVpYWSSBJYYmm9m1d4VO3o6woPVgLbjbZR3T3qPImDngtgX6tGaDyCWfzk6CxB--kEymKQLGgRjyU7qFnuJfcbPveQQvM8QjLnHzqbZhp3HR-xGbhrfh-EGi4otGhUl5Vsio2rt_ogqH_EoG7KZkIrn0KesER0zjZkGzp12Bwv-6gpYEs8CCUl3jIRXu1Wg6BhQlWAZ7reO89fVfQ_Quda2Gg1AIpWMGf5-Xyn_otwCHh2H0CNUmptALOuZ_ZL0epmexAslyY85fO_NZDBILmCiIlD0Jm9uiBmA1owzxrlcTyhsUhmK8ekF-Qmh_10q5JECrW9SNGcYBpmNts9bSr6NQhIcHAkjUUJaR8Bn8EgISNpyuAI8qOelOZnf3B4wBLd5vrv8l5sN__xUmC0mPWrTKcYUiuhhlRv3OvDrM9lIZdcBIgqsIRJlXJeihX-GN5L51fdv8_72OFBYxoCVLW8zFXOYu0SZGn_V1vyMPB6oU5TVyLkaTVjAc",
-                          "token_type": "Bearer",
-                          "user": {
-                            "id": 16,
-                            "name": "Kaci Friesen",
-                            "email": "antonietta18@example.net",
-                            "role": "student"
-                          }
+                        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNWE3YWE4ZmFmZmMzZTA0Y2VhYmQwYTNjYjQwNGE2NDk4MzkzYzI2MmYwYWRjZTY2Y2NlYzhkY2E1NmE5OWFjYWU5Nzk4ZjcwNzZmZjI4MjgiLCJpYXQiOjE3MzY2ODU4NzQuNDk4MDI5LCJuYmYiOjE3MzY2ODU4NzQuNDk4MDM0LCJleHAiOjE3NTIzMjQyNzQuNDc0Mzg0LCJzdWIiOiIxNiIsInNjb3BlcyI6W119.nI1Vm689YGwu38YrfG2PGEJzrBPxyjY8x5lnp8kXEIMPiShPnY36mQmW45b7Vza5X57FTp7bi3RvWSOZQu7mZgxCcu0Jhcoqi3_uXwlLamWHLBUO5BwWXExQRfbxa85DQi46Bs9ytoCs0WslYUCcEYR1WbObEYlj5wnOFOwTJP-6utSMQAWxVpYWSSBJYYmm9m1d4VO3o6woPVgLbjbZR3T3qPImDngtgX6tGaDyCWfzk6CxB--kEymKQLGgRjyU7qFnuJfcbPveQQvM8QjLnHzqbZhp3HR-xGbhrfh-EGi4otGhUl5Vsio2rt_ogqH_EoG7KZkIrn0KesER0zjZkGzp12Bwv-6gpYEs8CCUl3jIRXu1Wg6BhQlWAZ7reO89fVfQ_Quda2Gg1AIpWMGf5-Xyn_otwCHh2H0CNUmptALOuZ_ZL0epmexAslyY85fO_NZDBILmCiIlD0Jm9uiBmA1owzxrlcTyhsUhmK8ekF-Qmh_10q5JECrW9SNGcYBpmNts9bSr6NQhIcHAkjUUJaR8Bn8EgISNpyuAI8qOelOZnf3B4wBLd5vrv8l5sN__xUmC0mPWrTKcYUiuhhlRv3OvDrM9lIZdcBIgqsIRJlXJeihX-GN5L51fdv8_72OFBYxoCVLW8zFXOYu0SZGn_V1vyMPB6oU5TVyLkaTVjAc",
+                        "token_type": "Bearer",
+                        "user": {
+                          "id": 16,
+                          "name": "Kaci Friesen",
+                          "email": "antonietta18@example.net",
+                          "role": "student"
                         }
                       }
                     }
                   }
                 }
-              },
-              "headers": {}
-            },
-            "401": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "用户名或密码错误",
-                        "data": null
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "参数校验失败",
-                        "data": {
-                          "email": [
-                            "邮箱不能为空"
-                          ],
-                          "password": [
-                            "密码不能为空"
-                          ],
-                          "role": [
-                            "角色不能为空"
-                          ]
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            }
-          },
-          "security": []
-        }
-      },
-      "/api/logout": {
-        "post": {
-          "summary": "登出",
-          "deprecated": false,
-          "description": "",
-          "tags": [],
-          "parameters": [
-            {
-              "name": "Authorization",
-              "in": "header",
-              "description": "类型：Bearer Token，Token 值是登录返回的凭证",
-              "required": true,
-              "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTk2YTg1NzFhNjVjY2ZlYzVkODIzMjUzZWZiOGUzNjY2NzhiZmM5ODdlMTU3MTRjOWQzMThkZDYxYTFhNjM2NWFmNzRkOTAxOTJmYWUxMDUiLCJpYXQiOjE3MzY2NjM1MDguODMxNDQ1LCJuYmYiOjE3MzY2NjM1MDguODMxNDUsImV4cCI6MTc1MjMwMTkwOC44MDY2ODIsInN1YiI6IjIiLCJzY29wZXMiOltdfQ.aH_seLIB8KLyttg4-BKL6n53geaEml3b0xXpFLqEZ6CIwm30tugtKPYVwbqFIDjx4CCYxnO6u-vr0EK8T_f9uu6aOHvF06SbyCtENB3MuzWXQTG_CM-0Lbn8HmyYz_siXJzLD7l0YujAn-DlJCBWnttUc6-yRSncBUY8KuQjW1EVu6ES-8nbsMuIMlVQDp4LU0bDTUSIMFq8i77BPYcqArooDX4F7tW3B8VZtPFBGHidUeoOEkBKYnfwb3m1roLPTpN9ws6MQUJ1qAp7QNtXRCBSDFnWqk2CUk7FwSB6EKIPBrFLzs0Oq3VPTO0aPSeEjAPnm-kCIC1EoT1M53zRHO3MgxcgzHfTqrJtHOl-xoywv9Vt4BMBVi40dfMXyqhSphM91iIMWo6405TEA0c4M4dyI5EyrxAt3RpdJiCGHMbHOqaI3s9gsZbSsq_HCuxT84diC2WehOR_1HKUeQDWsUiB1gs7tk-bG_sflZjulmkJK3L9FY95V2amR6zIxA2vANPdDWg_PP-BDPno4VZdMtsvdQC2Xcj6ZnXutZyspNhqo8byc9yf-g-H4P6LcsJfBhCsagopFe52l_91ByVDEZHW_vwYeNLExhwiJTlJTDFD0hxI2JZxDRJFTpwK0tpDDENRtiyWtWCoRI0vphNP1WEiP5HjgJWB_1z84klnzuQ",
-              "schema": {
-                "type": "string"
               }
-            }
-          ],
-          "requestBody": {
+            },
+            "headers": {}
+          },
+          "401": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "用户名或密码错误",
+                      "data": null
+                    }
+                  }
                 }
               }
-            }
+            },
+            "headers": {}
           },
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "message": {
-                        "type": "string"
-                      },
-                      "code": {
-                        "type": "integer",
-                        "description": "业务码 0 代表成功，非 0 表示失败"
-                      },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "参数校验失败",
                       "data": {
-                        "type": "object",
-                        "properties": {}
-                      }
-                    },
-                    "required": [
-                      "message",
-                      "code",
-                      "data"
-                    ]
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Success",
-                      "value": {
-                        "message": "已成功登出",
-                        "code": 0,
-                        "data": null
+                        "email": [
+                          "邮箱不能为空"
+                        ],
+                        "password": [
+                          "密码不能为空"
+                        ],
+                        "role": [
+                          "角色不能为空"
+                        ]
                       }
                     }
                   }
                 }
-              },
-              "headers": {}
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "summary": "登出",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "类型：Bearer Token，Token 值是登录返回的凭证",
+            "required": true,
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTk2YTg1NzFhNjVjY2ZlYzVkODIzMjUzZWZiOGUzNjY2NzhiZmM5ODdlMTU3MTRjOWQzMThkZDYxYTFhNjM2NWFmNzRkOTAxOTJmYWUxMDUiLCJpYXQiOjE3MzY2NjM1MDguODMxNDQ1LCJuYmYiOjE3MzY2NjM1MDguODMxNDUsImV4cCI6MTc1MjMwMTkwOC44MDY2ODIsInN1YiI6IjIiLCJzY29wZXMiOltdfQ.aH_seLIB8KLyttg4-BKL6n53geaEml3b0xXpFLqEZ6CIwm30tugtKPYVwbqFIDjx4CCYxnO6u-vr0EK8T_f9uu6aOHvF06SbyCtENB3MuzWXQTG_CM-0Lbn8HmyYz_siXJzLD7l0YujAn-DlJCBWnttUc6-yRSncBUY8KuQjW1EVu6ES-8nbsMuIMlVQDp4LU0bDTUSIMFq8i77BPYcqArooDX4F7tW3B8VZtPFBGHidUeoOEkBKYnfwb3m1roLPTpN9ws6MQUJ1qAp7QNtXRCBSDFnWqk2CUk7FwSB6EKIPBrFLzs0Oq3VPTO0aPSeEjAPnm-kCIC1EoT1M53zRHO3MgxcgzHfTqrJtHOl-xoywv9Vt4BMBVi40dfMXyqhSphM91iIMWo6405TEA0c4M4dyI5EyrxAt3RpdJiCGHMbHOqaI3s9gsZbSsq_HCuxT84diC2WehOR_1HKUeQDWsUiB1gs7tk-bG_sflZjulmkJK3L9FY95V2amR6zIxA2vANPdDWg_PP-BDPno4VZdMtsvdQC2Xcj6ZnXutZyspNhqo8byc9yf-g-H4P6LcsJfBhCsagopFe52l_91ByVDEZHW_vwYeNLExhwiJTlJTDFD0hxI2JZxDRJFTpwK0tpDDENRtiyWtWCoRI0vphNP1WEiP5HjgJWB_1z84klnzuQ",
+            "schema": {
+              "type": "string"
             }
-          },
-          "security": []
-        }
-      },
-      "/api/courses": {
-        "post": {
-          "summary": "创建课程",
-          "deprecated": false,
-          "description": "",
-          "tags": [],
-          "parameters": [
-            {
-              "name": "Authorization",
-              "in": "header",
-              "description": "老师的 token",
-              "required": true,
-              "example": "{{TeacherBearerToken}}",
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
               "schema": {
-                "type": "string"
+                "type": "object",
+                "properties": {}
               }
             }
-          ],
-          "requestBody": {
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "name": {
-                      "type": "string",
-                      "description": "课程名字，最多 255 个字"
+                    "message": {
+                      "type": "string"
                     },
-                    "year_month": {
-                      "type": "string",
-                      "description": "课程年月，格式： YYYY-MM"
+                    "code": {
+                      "type": "integer",
+                      "description": "业务码 0 代表成功，非 0 表示失败"
                     },
-                    "fee": {
-                      "type": "number",
-                      "description": "课程费用，不能小于0"
+                    "data": {
+                      "type": "object",
+                      "properties": {}
                     }
                   },
                   "required": [
-                    "name",
-                    "year_month",
-                    "fee"
+                    "message",
+                    "code",
+                    "data"
                   ]
                 },
-                "example": {
-                  "name": "数学课",
-                  "year_month": "2024-03",
-                  "fee": 100.03
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "message": "已成功登出",
+                      "code": 0,
+                      "data": null
+                    }
+                  }
                 }
               }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/courses": {
+      "post": {
+        "summary": "创建课程",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "老师的 token",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "课程名字，最多 255 个字"
+                  },
+                  "year_month": {
+                    "type": "string",
+                    "description": "课程年月，格式： YYYY-MM"
+                  },
+                  "fee": {
+                    "type": "number",
+                    "description": "课程费用，不能小于0"
+                  },
+                  "student_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "学生ids"
+                  }
+                },
+                "required": [
+                  "name",
+                  "year_month",
+                  "fee",
+                  "student_ids"
+                ]
+              },
+              "example": {
+                "name": "数学课",
+                "year_month": "2024-03",
+                "fee": 100.03
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "业务码 0 代表成功，非 0 表示失败"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "信息"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "课程id"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "课程名字"
+                        },
+                        "year_month": {
+                          "type": "string",
+                          "description": "课程年月，格式： YYYY-MM"
+                        },
+                        "fee": {
+                          "type": "number",
+                          "description": "课程费用"
+                        },
+                        "teacher_id": {
+                          "type": "integer",
+                          "description": "创建老师id"
+                        },
+                        "students": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "学生id"
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "学生名字"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "year_month",
+                        "fee",
+                        "teacher_id",
+                        "students"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "课程创建成功",
+                      "data": {
+                        "id": 92,
+                        "name": "数学课",
+                        "year_month": "2024-03",
+                        "fee": 100.03,
+                        "teacher_id": 2
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "您没有权限执行此操作",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "参数校验失败",
+                      "data": {
+                        "name": [
+                          "课程名称不能为空"
+                        ],
+                        "year_month": [
+                          "年月格式必须为YYYY-MM"
+                        ],
+                        "fee": [
+                          "费用必须为数字"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/courses/{course}/attach-students": {
+      "post": {
+        "summary": "关联学生到课程",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "course",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "92",
+            "schema": {
+              "type": "string"
             }
           },
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "integer",
-                        "description": "业务码 0 代表成功，非 0 表示失败"
-                      },
-                      "message": {
-                        "type": "string",
-                        "description": "信息"
-                      },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "老师的 token",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "student_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "学生 user_ids"
+                  }
+                },
+                "required": [
+                  "student_ids"
+                ]
+              },
+              "example": {
+                "student_ids": [
+                  7,
+                  8,
+                  9,
+                  10,
+                  11
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "业务码 0 代表成功，非 0 表示失败"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "null"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "课程学生设置成功",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "您只能关联学生到自己的课程",
+                      "data": null
+                    }
+                  },
+                  "2": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "您没有权限执行此操作",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "参数校验失败",
                       "data": {
+                        "student": [
+                          "学生必须为数组",
+                          "选择的学生不存在或不是学生身份"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/courses/student-courses": {
+      "get": {
+        "summary": "获取学生的课程列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "当前页",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "每页显示数量",
+            "required": false,
+            "example": 15,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "year_month",
+            "in": "query",
+            "description": "课程年月，格式: YYYY-MM",
+            "required": false,
+            "example": "2023-07",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "可根据课程名匹配",
+            "required": false,
+            "example": "数学课",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "学生token",
+            "required": true,
+            "example": "{{StudentBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "业务码 0 代表成功，非 0 表示失败"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer",
+                          "description": "当前页"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "课程id"
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "课程名字"
+                              },
+                              "year_month": {
+                                "type": "string",
+                                "description": "课程年月，格式： YYYY-MM"
+                              },
+                              "fee": {
+                                "type": "string",
+                                "description": "课程费用"
+                              },
+                              "teacher_id": {
+                                "type": "integer",
+                                "description": "课程老师id"
+                              },
+                              "invoice_status": {
+                                "type": "string",
+                                "description": "账单状态：pending 待支付、paid 已支付、failed 支付失败"
+                              },
+                              "invoice_send_at": {
+                                "type": "string",
+                                "description": "账单发送时间"
+                              },
+                              "paid_at": {
+                                "type": "string",
+                                "description": "支付时间"
+                              },
+                              "teacher": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "description": "课程老师id"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "课程老师名字"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "name"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "year_month",
+                              "fee",
+                              "teacher_id",
+                              "teacher",
+                              "invoice_status",
+                              "invoice_send_at",
+                              "paid_at"
+                            ]
+                          }
+                        },
+                        "first_page_url": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "last_page_url": {
+                          "type": "string"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "active": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "label",
+                              "active"
+                            ]
+                          }
+                        },
+                        "next_page_url": {
+                          "type": "null"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer",
+                          "description": "每页数量"
+                        },
+                        "prev_page_url": {
+                          "type": "null"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer",
+                          "description": "总数"
+                        }
+                      },
+                      "required": [
+                        "current_page",
+                        "data",
+                        "first_page_url",
+                        "from",
+                        "last_page",
+                        "last_page_url",
+                        "links",
+                        "next_page_url",
+                        "path",
+                        "per_page",
+                        "prev_page_url",
+                        "to",
+                        "total"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
+                      "data": {
+                        "current_page": 1,
+                        "data": [
+                          {
+                            "id": 11,
+                            "name": "高等数学初级理论课程",
+                            "fee": "8237.76",
+                            "teacher_id": 6,
+                            "teacher": {
+                              "id": 6,
+                              "name": "Madyson Ernser"
+                            },
+                            "year_month": "2023-07",
+                            "invoice_status": "pending",
+                            "invoice_send_at": "2025-01-12 10:19:47",
+                            "paid_at": ""
+                          },
+                          {
+                            "id": 7,
+                            "name": "计算机基础高级研讨课程",
+                            "fee": "404.89",
+                            "teacher_id": 5,
+                            "teacher": {
+                              "id": 5,
+                              "name": "Cordia Paucek III"
+                            },
+                            "year_month": "2023-07",
+                            "invoice_status": "paid",
+                            "invoice_send_at": "2025-01-12 10:19:42",
+                            "paid_at": ""
+                          },
+                          {
+                            "id": 5,
+                            "name": "大学英语高级实践课程",
+                            "fee": "4178.10",
+                            "teacher_id": 4,
+                            "teacher": {
+                              "id": 4,
+                              "name": "Eulalia Carter"
+                            },
+                            "year_month": "2024-10",
+                            "invoice_status": "failed",
+                            "invoice_send_at": "2025-01-12 10:19:39",
+                            "paid_at": ""
+                          },
+                          {
+                            "id": 4,
+                            "name": "人工智能初级实践课程",
+                            "fee": "6125.13",
+                            "teacher_id": 3,
+                            "teacher": {
+                              "id": 3,
+                              "name": "Dr. Frederic Cummings"
+                            },
+                            "year_month": "2024-05",
+                            "invoice_status": "pending",
+                            "invoice_send_at": "2025-01-12 10:19:37",
+                            "paid_at": ""
+                          },
+                          {
+                            "id": 2,
+                            "name": "Web开发中级研讨课程",
+                            "fee": "9306.31",
+                            "teacher_id": 2,
+                            "teacher": {
+                              "id": 2,
+                              "name": "Mrs. Precious Ebert"
+                            },
+                            "year_month": "2023-04",
+                            "invoice_status": "failed",
+                            "invoice_send_at": "2025-01-12 10:19:34",
+                            "paid_at": ""
+                          }
+                        ],
+                        "first_page_url": "http://poper-edu-management-backend.local/api/courses/student-courses?page=1",
+                        "from": 1,
+                        "last_page": 1,
+                        "last_page_url": "http://poper-edu-management-backend.local/api/courses/student-courses?page=1",
+                        "links": [
+                          {
+                            "url": null,
+                            "label": "&laquo; Previous",
+                            "active": false
+                          },
+                          {
+                            "url": "http://poper-edu-management-backend.local/api/courses/student-courses?page=1",
+                            "label": "1",
+                            "active": true
+                          },
+                          {
+                            "url": null,
+                            "label": "Next &raquo;",
+                            "active": false
+                          }
+                        ],
+                        "next_page_url": null,
+                        "path": "http://poper-edu-management-backend.local/api/courses/student-courses",
+                        "per_page": 15,
+                        "prev_page_url": null,
+                        "to": 5,
+                        "total": 5
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "您只能关联学生到自己的课程",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "参数校验失败",
+                      "data": {
+                        "year_month": [
+                          "年月格式必须为YYYY"
+                        ],
+                        "page": [
+                          "页码必须为整数"
+                        ],
+                        "per_page": [
+                          "每页数量必须为整数"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/courses/student-courses/{%24course}": {
+      "get": {
+        "summary": "查看学生的课程详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "$course",
+            "in": "path",
+            "description": "课程id",
+            "required": true,
+            "example": "4",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{StudentBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "课程id"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "课程名字"
+                        },
+                        "fee": {
+                          "type": "string",
+                          "description": "课程费用"
+                        },
+                        "teacher_id": {
+                          "type": "integer",
+                          "description": "老师id"
+                        },
+                        "year_month": {
+                          "type": "string",
+                          "description": "课程年月"
+                        },
+                        "teacher": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "老师id"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "老师名字"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name"
+                          ]
+                        },
+                        "invoice_status": {
+                          "type": "string",
+                          "description": "账单状态：pending 待支付、paid 已支付、failed 支付失败"
+                        },
+                        "invoice_send_at": {
+                          "type": "string",
+                          "description": "账单发送时间"
+                        },
+                        "paid_at": {
+                          "type": "string",
+                          "description": "支付时间"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "fee",
+                        "teacher_id",
+                        "year_month",
+                        "teacher",
+                        "invoice_status",
+                        "invoice_send_at",
+                        "paid_at"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
+                      "data": {
+                        "id": 4,
+                        "name": "人工智能初级实践课程",
+                        "fee": "6125.13",
+                        "teacher_id": 3,
+                        "year_month": "2024-05",
+                        "teacher": {
+                          "id": 3,
+                          "name": "Dr. Frederic Cummings"
+                        },
+                        "invoice_status": "failed",
+                        "invoice_send_at": "2025-01-12 10:19:36",
+                        "paid_at": ""
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/courses/teacher-courses": {
+      "get": {
+        "summary": "获取教师的课程列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "可以根据关键词匹配",
+            "required": false,
+            "example": "数学",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year_month",
+            "in": "query",
+            "description": "可以根据年月进行匹配",
+            "required": false,
+            "example": "2024-03",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "课程id"
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "课程名字"
+                              },
+                              "fee": {
+                                "type": "string",
+                                "description": "课程费用"
+                              },
+                              "teacher_id": {
+                                "type": "integer",
+                                "description": "老师id"
+                              },
+                              "year_month": {
+                                "type": "string",
+                                "description": "课程年月"
+                              },
+                              "students": {
+                                "type": "integer",
+                                "description": "课程学生数量"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "fee",
+                              "teacher_id",
+                              "year_month",
+                              "students"
+                            ]
+                          }
+                        },
+                        "first_page_url": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "last_page_url": {
+                          "type": "string"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "active": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "label",
+                              "active"
+                            ]
+                          }
+                        },
+                        "next_page_url": {
+                          "type": "null"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "prev_page_url": {
+                          "type": "null"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "current_page",
+                        "data",
+                        "first_page_url",
+                        "from",
+                        "last_page",
+                        "last_page_url",
+                        "links",
+                        "next_page_url",
+                        "path",
+                        "per_page",
+                        "prev_page_url",
+                        "to",
+                        "total"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
+                      "data": {
+                        "current_page": 1,
+                        "data": [
+                          {
+                            "id": 93,
+                            "name": "数学课",
+                            "fee": "100.03",
+                            "teacher_id": 2,
+                            "year_month": "2024-03",
+                            "students": 0
+                          },
+                          {
+                            "id": 92,
+                            "name": "数学课",
+                            "fee": "100.03",
+                            "teacher_id": 2,
+                            "year_month": "2024-03",
+                            "students": 3
+                          },
+                          {
+                            "id": 91,
+                            "name": "数学课",
+                            "fee": "100.03",
+                            "teacher_id": 2,
+                            "year_month": "2024-03",
+                            "students": 0
+                          }
+                        ],
+                        "first_page_url": "http://poper-edu-management-backend.local/api/courses/teacher-courses?page=1",
+                        "from": 1,
+                        "last_page": 1,
+                        "last_page_url": "http://poper-edu-management-backend.local/api/courses/teacher-courses?page=1",
+                        "links": [
+                          {
+                            "url": null,
+                            "label": "&laquo; Previous",
+                            "active": false
+                          },
+                          {
+                            "url": "http://poper-edu-management-backend.local/api/courses/teacher-courses?page=1",
+                            "label": "1",
+                            "active": true
+                          },
+                          {
+                            "url": null,
+                            "label": "Next &raquo;",
+                            "active": false
+                          }
+                        ],
+                        "next_page_url": null,
+                        "path": "http://poper-edu-management-backend.local/api/courses/teacher-courses",
+                        "per_page": 15,
+                        "prev_page_url": null,
+                        "to": 3,
+                        "total": 3
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/courses/teacher-courses/{course}": {
+      "get": {
+        "summary": "获取老师的课程详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "course",
+            "in": "path",
+            "description": "课程id",
+            "required": true,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "课程id"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "课程名字"
+                        },
+                        "year_month": {
+                          "type": "string",
+                          "description": "课程年月"
+                        },
+                        "fee": {
+                          "type": "string",
+                          "description": "课程费用"
+                        },
+                        "teacher_id": {
+                          "type": "integer",
+                          "description": "课程老师id"
+                        },
+                        "students": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "学生id"
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "学生姓名"
+                              },
+                              "invoice_status": {
+                                "type": "string",
+                                "description": "学生账单状态：pending 待支付、paid 已支付、failed 支付失败"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "invoice_status"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "year_month",
+                        "fee",
+                        "teacher_id",
+                        "students"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
+                      "data": {
+                        "id": 1,
+                        "name": "计算机网络初级实践课程",
+                        "year_month": "2024-04-30T16:00:00.000000Z",
+                        "fee": "8716.70",
+                        "teacher_id": 2,
+                        "students": [
+                          {
+                            "id": 7,
+                            "name": "Cornelius Mertz",
+                            "invoice_status": "failed"
+                          },
+                          {
+                            "id": 8,
+                            "name": "Benedict McKenzie",
+                            "invoice_status": "paid"
+                          },
+                          {
+                            "id": 11,
+                            "name": "Mr. Edwardo Cummings",
+                            "invoice_status": "failed"
+                          },
+                          {
+                            "id": 19,
+                            "name": "Delia Rowe",
+                            "invoice_status": "failed"
+                          },
+                          {
+                            "id": 22,
+                            "name": "Prof. Verona Littel DVM",
+                            "invoice_status": "pending"
+                          },
+                          {
+                            "id": 24,
+                            "name": "Keshawn Erdman",
+                            "invoice_status": "pending"
+                          },
+                          {
+                            "id": 25,
+                            "name": "Patsy Gorczany",
+                            "invoice_status": "failed"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/courses/{course}": {
+      "put": {
+        "summary": "编辑课程",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "course",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 92,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "老师的 token",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "课程名字，最多 255 个字"
+                  },
+                  "year_month": {
+                    "type": "string",
+                    "description": "课程年月，格式： YYYY-MM"
+                  },
+                  "fee": {
+                    "type": "number",
+                    "description": "课程费用，不能小于0"
+                  },
+                  "student_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "学生ids"
+                  }
+                },
+                "required": [
+                  "name",
+                  "year_month",
+                  "fee",
+                  "student_ids"
+                ]
+              },
+              "example": {
+                "name": "数学课",
+                "year_month": "2024-03",
+                "fee": 100.03
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "业务码 0 代表成功，非 0 表示失败"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "信息"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "课程id"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "课程名字"
+                        },
+                        "year_month": {
+                          "type": "string",
+                          "description": "课程年月，格式： YYYY-MM"
+                        },
+                        "fee": {
+                          "type": "number",
+                          "description": "课程费用"
+                        },
+                        "teacher_id": {
+                          "type": "integer",
+                          "description": "创建老师id"
+                        },
+                        "students": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "学生id"
+                              },
+                              "name": {
+                                "type": "string",
+                                "description": "学生名字"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "year_month",
+                        "fee",
+                        "teacher_id",
+                        "students"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "课程创建成功",
+                      "data": {
+                        "id": 92,
+                        "name": "数学课",
+                        "year_month": "2024-03",
+                        "fee": 100.03,
+                        "teacher_id": 2
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "您没有权限执行此操作",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "参数校验失败",
+                      "data": {
+                        "name": [
+                          "课程名称不能为空"
+                        ],
+                        "year_month": [
+                          "年月格式必须为YYYY-MM"
+                        ],
+                        "fee": [
+                          "费用必须为数字"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/invoices/student-invoices": {
+      "get": {
+        "summary": "获取学生的账单列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "当前页",
+            "required": false,
+            "example": "1",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "每页显示数量",
+            "required": false,
+            "example": "10",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "状态：pending 待支付、paid 已支付、failed 支付失败",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "可以根据课程关键词匹配",
+            "required": false,
+            "example": "数学课",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year_month",
+            "in": "query",
+            "description": "可以根据课程年月查询",
+            "required": false,
+            "example": "2022-12",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "send_start",
+            "in": "query",
+            "description": "可以根据发送时间范围筛选",
+            "required": false,
+            "example": "2022-12-10",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "send_end",
+            "in": "query",
+            "description": "可以根据发送时间范围筛选",
+            "required": false,
+            "example": "2023-12-10",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{StudentBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "业务码 0 代表成功，非 0 表示失败"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "账单id"
+                              },
+                              "course_id": {
+                                "type": "integer",
+                                "description": "课程id"
+                              },
+                              "student_id": {
+                                "type": "integer",
+                                "description": "学生id"
+                              },
+                              "amount": {
+                                "type": "string",
+                                "description": "费用"
+                              },
+                              "status": {
+                                "type": "string",
+                                "description": "状态：pending 待支付、paid 已支付、failed 支付失败"
+                              },
+                              "send_at": {
+                                "type": "string",
+                                "description": "发送时间"
+                              },
+                              "paid_at": {
+                                "type": "string",
+                                "description": "支付时间"
+                              },
+                              "course": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "description": "课程id"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "课程名字"
+                                  },
+                                  "year_month": {
+                                    "type": "string",
+                                    "description": "课程年月，格式：YYYY-MM"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "name",
+                                  "year_month"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "course_id",
+                              "student_id",
+                              "amount",
+                              "status",
+                              "course",
+                              "send_at",
+                              "paid_at"
+                            ]
+                          }
+                        },
+                        "first_page_url": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "last_page_url": {
+                          "type": "string"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "active": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "label",
+                              "active"
+                            ]
+                          }
+                        },
+                        "next_page_url": {
+                          "type": "null"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "prev_page_url": {
+                          "type": "null"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "current_page",
+                        "data",
+                        "first_page_url",
+                        "from",
+                        "last_page",
+                        "last_page_url",
+                        "links",
+                        "next_page_url",
+                        "path",
+                        "per_page",
+                        "prev_page_url",
+                        "to",
+                        "total"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
+                      "data": {
+                        "current_page": 1,
+                        "data": [
+                          {
+                            "id": 80,
+                            "course_id": 91,
+                            "student_id": 16,
+                            "amount": "100.03",
+                            "status": "pending",
+                            "send_at": "2025-01-12 22:45:06",
+                            "paid_at": "",
+                            "course": {
+                              "id": 91,
+                              "name": "数学课",
+                              "year_month": "2024-03"
+                            }
+                          },
+                          {
+                            "id": 79,
+                            "course_id": 91,
+                            "student_id": 16,
+                            "amount": "100.03",
+                            "status": "pending",
+                            "send_at": "2025-01-12 22:40:27",
+                            "paid_at": "",
+                            "course": {
+                              "id": 91,
+                              "name": "数学课",
+                              "year_month": "2024-03"
+                            }
+                          },
+                          {
+                            "id": 67,
+                            "course_id": 11,
+                            "student_id": 16,
+                            "amount": "8237.76",
+                            "status": "pending",
+                            "send_at": "2025-01-12 10:19:47",
+                            "paid_at": "",
+                            "course": {
+                              "id": 11,
+                              "name": "高等数学初级理论课程",
+                              "year_month": "2023-07"
+                            }
+                          },
+                          {
+                            "id": 45,
+                            "course_id": 7,
+                            "student_id": 16,
+                            "amount": "404.89",
+                            "status": "paid",
+                            "send_at": "2025-01-12 10:19:42",
+                            "paid_at": "",
+                            "course": {
+                              "id": 7,
+                              "name": "计算机基础高级研讨课程",
+                              "year_month": "2023-07"
+                            }
+                          },
+                          {
+                            "id": 31,
+                            "course_id": 5,
+                            "student_id": 16,
+                            "amount": "4178.10",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:39",
+                            "paid_at": "",
+                            "course": {
+                              "id": 5,
+                              "name": "大学英语高级实践课程",
+                              "year_month": "2024-10"
+                            }
+                          },
+                          {
+                            "id": 22,
+                            "course_id": 4,
+                            "student_id": 16,
+                            "amount": "6125.13",
+                            "status": "pending",
+                            "send_at": "2025-01-12 10:19:37",
+                            "paid_at": "",
+                            "course": {
+                              "id": 4,
+                              "name": "人工智能初级实践课程",
+                              "year_month": "2024-05"
+                            }
+                          },
+                          {
+                            "id": 10,
+                            "course_id": 2,
+                            "student_id": 16,
+                            "amount": "9306.31",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:34",
+                            "paid_at": "",
+                            "course": {
+                              "id": 2,
+                              "name": "Web开发中级研讨课程",
+                              "year_month": "2023-04"
+                            }
+                          }
+                        ],
+                        "first_page_url": "http://poper-edu-management-backend.local/api/invoices/student-invoices?page=1",
+                        "from": 1,
+                        "last_page": 1,
+                        "last_page_url": "http://poper-edu-management-backend.local/api/invoices/student-invoices?page=1",
+                        "links": [
+                          {
+                            "url": null,
+                            "label": "&laquo; Previous",
+                            "active": false
+                          },
+                          {
+                            "url": "http://poper-edu-management-backend.local/api/invoices/student-invoices?page=1",
+                            "label": "1",
+                            "active": true
+                          },
+                          {
+                            "url": null,
+                            "label": "Next &raquo;",
+                            "active": false
+                          }
+                        ],
+                        "next_page_url": null,
+                        "path": "http://poper-edu-management-backend.local/api/invoices/student-invoices",
+                        "per_page": 15,
+                        "prev_page_url": null,
+                        "to": 7,
+                        "total": 7
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/invoices": {
+      "post": {
+        "summary": "创建账单",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "教师token",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "course_id": {
+                    "type": "integer",
+                    "description": "课程id"
+                  },
+                  "student_id": {
+                    "type": "integer",
+                    "description": "学生id"
+                  }
+                },
+                "required": [
+                  "course_id",
+                  "student_id"
+                ]
+              },
+              "example": {
+                "course_id": 91,
+                "student_id": 16
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "账单id"
+                        },
+                        "course_id": {
+                          "type": "integer",
+                          "description": "课程id"
+                        },
+                        "student_id": {
+                          "type": "integer",
+                          "description": "学生user_id"
+                        },
+                        "amount": {
+                          "type": "string",
+                          "description": "费用"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "状态：pending 待支付、paid 已支付、failed 支付失败"
+                        },
+                        "course": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "课程id"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "课程名字"
+                            },
+                            "year_month": {
+                              "type": "string",
+                              "description": "课程年月"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "year_month"
+                          ]
+                        },
+                        "student": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "学生user_id"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "学生姓名"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "course_id",
+                        "student_id",
+                        "amount",
+                        "status",
+                        "course",
+                        "student"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "账单创建成功",
+                      "data": {
+                        "id": 80,
+                        "course_id": 91,
+                        "student_id": 16,
+                        "amount": "100.03",
+                        "status": "pending",
+                        "course": {
+                          "id": 91,
+                          "name": "数学课",
+                          "year_month": "2024-03"
+                        },
+                        "student": {
+                          "id": 16,
+                          "name": "Kaci Friesen"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "您只能创建自己课程的账单",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "数据校验失败",
+                      "data": {
+                        "course_id": [
+                          "课程不能为空"
+                        ],
+                        "student_id": [
+                          "学生不存在或不是学生身份"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/invoices/{invoice}/send": {
+      "post": {
+        "summary": "发送账单",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "invoice",
+            "in": "path",
+            "description": "账单id",
+            "required": true,
+            "example": "80",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "账单id"
+                        },
+                        "course_id": {
+                          "type": "integer",
+                          "description": "课程id"
+                        },
+                        "student_id": {
+                          "type": "integer",
+                          "description": "学生user_id"
+                        },
+                        "amount": {
+                          "type": "string",
+                          "description": "费用"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "状态：pending 待支付、paid 已支付、failed 支付失败"
+                        },
+                        "course": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "课程id"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "课程名字"
+                            },
+                            "year_month": {
+                              "type": "string",
+                              "description": "课程年月"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "year_month"
+                          ]
+                        },
+                        "student": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "学生user_id"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "学生姓名"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "course_id",
+                        "student_id",
+                        "amount",
+                        "status",
+                        "course",
+                        "student"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "账单已发送",
+                      "data": {
+                        "id": 80,
+                        "course_id": 91,
+                        "student_id": 16,
+                        "amount": "100.03",
+                        "status": "pending",
+                        "course": {
+                          "id": 91,
+                          "name": "数学课",
+                          "year_month": "2024-03"
+                        },
+                        "student": {
+                          "id": 16,
+                          "name": "Kaci Friesen"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Exception",
+                    "value": {
+                      "code": 1,
+                      "message": "只能发送待处理的账单",
+                      "data": null
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/invoices/student-invoices/{%24invoice}": {
+      "get": {
+        "summary": "获取学生的账单详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "$invoice",
+            "in": "path",
+            "description": "账单id",
+            "required": true,
+            "example": "80",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{StudentBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "账单id"
+                        },
+                        "course_id": {
+                          "type": "integer",
+                          "description": "课程id"
+                        },
+                        "student_id": {
+                          "type": "integer",
+                          "description": "学生id"
+                        },
+                        "amount": {
+                          "type": "string",
+                          "description": "账单费用"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "账单状态：pending 待支付、paid 已支付、failed 支付失败"
+                        },
+                        "no": {
+                          "type": "string",
+                          "description": "账单编号"
+                        },
+                        "send_at": {
+                          "type": "string",
+                          "description": "账单发送时间"
+                        },
+                        "paid_at": {
+                          "type": "string",
+                          "description": "账单支付时间"
+                        },
+                        "course": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "description": "课程id"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "课程名字"
+                            },
+                            "year_month": {
+                              "type": "string",
+                              "description": "课程年月"
+                            },
+                            "teacher_name": {
+                              "type": "string",
+                              "description": "课程老师名字"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "year_month",
+                            "teacher_name"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "course_id",
+                        "student_id",
+                        "amount",
+                        "status",
+                        "no",
+                        "send_at",
+                        "paid_at",
+                        "course"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
+                      "data": {
+                        "id": 80,
+                        "course_id": 91,
+                        "student_id": 16,
+                        "amount": "100.03",
+                        "status": "pending",
+                        "no": "",
+                        "send_at": "2025-01-12 22:45:06",
+                        "paid_at": "",
+                        "course": {
+                          "id": 91,
+                          "name": "数学课",
+                          "year_month": "2024-03",
+                          "teacher_name": "Mrs. Precious Ebert"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/invoices/teacher-invoices": {
+      "get": {
+        "summary": "获取老师的账单列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "可以根据状态进行匹配",
+            "required": false,
+            "example": "failed",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "可以根据课程名或学生名称进行匹配",
+            "required": false,
+            "example": "数学",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year_month",
+            "in": "query",
+            "description": "可以按课程年月筛选",
+            "required": false,
+            "example": "2022-10",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "send_start",
+            "in": "query",
+            "description": "按账单发送时间筛选",
+            "required": false,
+            "example": "2022-10-22",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "send_end",
+            "in": "query",
+            "description": "按账单发送时间筛选",
+            "required": false,
+            "example": "2023-12-10",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "每页数量",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "当前页",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "current_page": {
+                          "type": "integer"
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "账单id"
+                              },
+                              "course_id": {
+                                "type": "integer",
+                                "description": "课程id"
+                              },
+                              "student_id": {
+                                "type": "integer",
+                                "description": "学生id"
+                              },
+                              "amount": {
+                                "type": "string",
+                                "description": "账单费用"
+                              },
+                              "status": {
+                                "type": "string",
+                                "description": "账单状态：pending 待支付、paid 已支付、failed 支付失败"
+                              },
+                              "send_at": {
+                                "type": "string",
+                                "description": "发送时间"
+                              },
+                              "paid_at": {
+                                "type": "string",
+                                "description": "支付时间"
+                              },
+                              "course": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "description": "课程id"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "课程名字"
+                                  },
+                                  "year_month": {
+                                    "type": "string",
+                                    "description": "课程年月"
+                                  }
+                                },
+                                "required": [
+                                  "id",
+                                  "name",
+                                  "year_month"
+                                ]
+                              },
+                              "student_name": {
+                                "type": "string",
+                                "description": "学生姓名"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "course_id",
+                              "student_id",
+                              "amount",
+                              "status",
+                              "send_at",
+                              "paid_at",
+                              "course",
+                              "student_name"
+                            ]
+                          }
+                        },
+                        "first_page_url": {
+                          "type": "string"
+                        },
+                        "from": {
+                          "type": "integer"
+                        },
+                        "last_page": {
+                          "type": "integer"
+                        },
+                        "last_page_url": {
+                          "type": "string"
+                        },
+                        "links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "nullable": true
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "active": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "label",
+                              "active"
+                            ]
+                          }
+                        },
+                        "next_page_url": {
+                          "type": "null"
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "per_page": {
+                          "type": "integer"
+                        },
+                        "prev_page_url": {
+                          "type": "null"
+                        },
+                        "to": {
+                          "type": "integer"
+                        },
+                        "total": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "current_page",
+                        "data",
+                        "first_page_url",
+                        "from",
+                        "last_page",
+                        "last_page_url",
+                        "links",
+                        "next_page_url",
+                        "path",
+                        "per_page",
+                        "prev_page_url",
+                        "to",
+                        "total"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
+                      "data": {
+                        "current_page": 1,
+                        "data": [
+                          {
+                            "id": 80,
+                            "course_id": 91,
+                            "student_id": 16,
+                            "amount": "100.03",
+                            "status": "pending",
+                            "send_at": "2025-01-12 22:45:06",
+                            "paid_at": "",
+                            "course": {
+                              "id": 91,
+                              "name": "数学课",
+                              "year_month": "2024-03"
+                            },
+                            "student_name": "Kaci Friesen"
+                          },
+                          {
+                            "id": 79,
+                            "course_id": 91,
+                            "student_id": 16,
+                            "amount": "100.03",
+                            "status": "pending",
+                            "send_at": "2025-01-12 22:40:27",
+                            "paid_at": "",
+                            "course": {
+                              "id": 91,
+                              "name": "数学课",
+                              "year_month": "2024-03"
+                            },
+                            "student_name": "Kaci Friesen"
+                          },
+                          {
+                            "id": 13,
+                            "course_id": 2,
+                            "student_id": 24,
+                            "amount": "9306.31",
+                            "status": "pending",
+                            "send_at": "2025-01-12 10:19:35",
+                            "paid_at": "",
+                            "course": {
+                              "id": 2,
+                              "name": "Web开发中级研讨课程",
+                              "year_month": "2023-04"
+                            },
+                            "student_name": "Keshawn Erdman"
+                          },
+                          {
+                            "id": 12,
+                            "course_id": 2,
+                            "student_id": 21,
+                            "amount": "9306.31",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:35",
+                            "paid_at": "",
+                            "course": {
+                              "id": 2,
+                              "name": "Web开发中级研讨课程",
+                              "year_month": "2023-04"
+                            },
+                            "student_name": "Ms. Allene Simonis IV"
+                          },
+                          {
+                            "id": 11,
+                            "course_id": 2,
+                            "student_id": 20,
+                            "amount": "9306.31",
+                            "status": "paid",
+                            "send_at": "2025-01-12 10:19:34",
+                            "paid_at": "",
+                            "course": {
+                              "id": 2,
+                              "name": "Web开发中级研讨课程",
+                              "year_month": "2023-04"
+                            },
+                            "student_name": "Ms. Christine Shields"
+                          },
+                          {
+                            "id": 10,
+                            "course_id": 2,
+                            "student_id": 16,
+                            "amount": "9306.31",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:34",
+                            "paid_at": "",
+                            "course": {
+                              "id": 2,
+                              "name": "Web开发中级研讨课程",
+                              "year_month": "2023-04"
+                            },
+                            "student_name": "Kaci Friesen"
+                          },
+                          {
+                            "id": 9,
+                            "course_id": 2,
+                            "student_id": 14,
+                            "amount": "9306.31",
+                            "status": "pending",
+                            "send_at": "2025-01-12 10:19:34",
+                            "paid_at": "",
+                            "course": {
+                              "id": 2,
+                              "name": "Web开发中级研讨课程",
+                              "year_month": "2023-04"
+                            },
+                            "student_name": "Esta Bailey"
+                          },
+                          {
+                            "id": 8,
+                            "course_id": 2,
+                            "student_id": 11,
+                            "amount": "9306.31",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:34",
+                            "paid_at": "",
+                            "course": {
+                              "id": 2,
+                              "name": "Web开发中级研讨课程",
+                              "year_month": "2023-04"
+                            },
+                            "student_name": "Mr. Edwardo Cummings"
+                          },
+                          {
+                            "id": 7,
+                            "course_id": 1,
+                            "student_id": 25,
+                            "amount": "8716.70",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:33",
+                            "paid_at": "",
+                            "course": {
+                              "id": 1,
+                              "name": "计算机网络初级实践课程",
+                              "year_month": "2024-05"
+                            },
+                            "student_name": "Patsy Gorczany"
+                          },
+                          {
+                            "id": 6,
+                            "course_id": 1,
+                            "student_id": 24,
+                            "amount": "8716.70",
+                            "status": "pending",
+                            "send_at": "2025-01-12 10:19:33",
+                            "paid_at": "",
+                            "course": {
+                              "id": 1,
+                              "name": "计算机网络初级实践课程",
+                              "year_month": "2024-05"
+                            },
+                            "student_name": "Keshawn Erdman"
+                          },
+                          {
+                            "id": 5,
+                            "course_id": 1,
+                            "student_id": 22,
+                            "amount": "8716.70",
+                            "status": "pending",
+                            "send_at": "2025-01-12 10:19:33",
+                            "paid_at": "",
+                            "course": {
+                              "id": 1,
+                              "name": "计算机网络初级实践课程",
+                              "year_month": "2024-05"
+                            },
+                            "student_name": "Prof. Verona Littel DVM"
+                          },
+                          {
+                            "id": 4,
+                            "course_id": 1,
+                            "student_id": 19,
+                            "amount": "8716.70",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:33",
+                            "paid_at": "",
+                            "course": {
+                              "id": 1,
+                              "name": "计算机网络初级实践课程",
+                              "year_month": "2024-05"
+                            },
+                            "student_name": "Delia Rowe"
+                          },
+                          {
+                            "id": 3,
+                            "course_id": 1,
+                            "student_id": 11,
+                            "amount": "8716.70",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:32",
+                            "paid_at": "",
+                            "course": {
+                              "id": 1,
+                              "name": "计算机网络初级实践课程",
+                              "year_month": "2024-05"
+                            },
+                            "student_name": "Mr. Edwardo Cummings"
+                          },
+                          {
+                            "id": 2,
+                            "course_id": 1,
+                            "student_id": 8,
+                            "amount": "8716.70",
+                            "status": "paid",
+                            "send_at": "2025-01-12 10:19:32",
+                            "paid_at": "",
+                            "course": {
+                              "id": 1,
+                              "name": "计算机网络初级实践课程",
+                              "year_month": "2024-05"
+                            },
+                            "student_name": "Benedict McKenzie"
+                          },
+                          {
+                            "id": 1,
+                            "course_id": 1,
+                            "student_id": 7,
+                            "amount": "8716.70",
+                            "status": "failed",
+                            "send_at": "2025-01-12 10:19:32",
+                            "paid_at": "",
+                            "course": {
+                              "id": 1,
+                              "name": "计算机网络初级实践课程",
+                              "year_month": "2024-05"
+                            },
+                            "student_name": "Cornelius Mertz"
+                          }
+                        ],
+                        "first_page_url": "http://poper-edu-management-backend.local/api/invoices/teacher-invoices?page=1",
+                        "from": 1,
+                        "last_page": 1,
+                        "last_page_url": "http://poper-edu-management-backend.local/api/invoices/teacher-invoices?page=1",
+                        "links": [
+                          {
+                            "url": null,
+                            "label": "&laquo; Previous",
+                            "active": false
+                          },
+                          {
+                            "url": "http://poper-edu-management-backend.local/api/invoices/teacher-invoices?page=1",
+                            "label": "1",
+                            "active": true
+                          },
+                          {
+                            "url": null,
+                            "label": "Next &raquo;",
+                            "active": false
+                          }
+                        ],
+                        "next_page_url": null,
+                        "path": "http://poper-edu-management-backend.local/api/invoices/teacher-invoices",
+                        "per_page": 15,
+                        "prev_page_url": null,
+                        "to": 15,
+                        "total": 15
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/students": {
+      "get": {
+        "summary": "学生列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "可以根据关键词（姓名、邮箱）匹配",
+            "required": false,
+            "example": "张三",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
                         "type": "object",
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "description": "课程id"
+                            "description": "学生id"
                           },
                           "name": {
                             "type": "string",
-                            "description": "课程名字"
-                          },
-                          "year_month": {
-                            "type": "string",
-                            "description": "课程年月，格式： YYYY-MM"
-                          },
-                          "fee": {
-                            "type": "number",
-                            "description": "课程费用"
-                          },
-                          "teacher_id": {
-                            "type": "integer",
-                            "description": "创建老师id"
+                            "description": "学生姓名"
                           }
                         },
                         "required": [
                           "id",
-                          "name",
-                          "year_month",
-                          "fee",
-                          "teacher_id"
+                          "name"
                         ]
                       }
-                    },
-                    "required": [
-                      "code",
-                      "message",
-                      "data"
-                    ]
+                    }
                   },
-                  "examples": {
-                    "1": {
-                      "summary": "Success",
-                      "value": {
-                        "code": 0,
-                        "message": "课程创建成功",
-                        "data": {
-                          "id": 92,
-                          "name": "数学课",
-                          "year_month": "2024-03",
-                          "fee": 100.03,
-                          "teacher_id": 2
+                  "required": [
+                    "code",
+                    "message",
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
+                      "data": [
+                        {
+                          "id": 7,
+                          "name": "Cornelius Mertz"
+                        },
+                        {
+                          "id": 8,
+                          "name": "Benedict McKenzie"
+                        },
+                        {
+                          "id": 9,
+                          "name": "Kyra Olson"
+                        },
+                        {
+                          "id": 10,
+                          "name": "Cleora Armstrong"
+                        },
+                        {
+                          "id": 11,
+                          "name": "Mr. Edwardo Cummings"
+                        },
+                        {
+                          "id": 12,
+                          "name": "Daisha Mohr"
+                        },
+                        {
+                          "id": 13,
+                          "name": "Nickolas Wiza V"
+                        },
+                        {
+                          "id": 14,
+                          "name": "Esta Bailey"
+                        },
+                        {
+                          "id": 15,
+                          "name": "Edmund Goodwin"
+                        },
+                        {
+                          "id": 16,
+                          "name": "Kaci Friesen"
+                        },
+                        {
+                          "id": 17,
+                          "name": "Abigale Buckridge MD"
+                        },
+                        {
+                          "id": 18,
+                          "name": "Consuelo Aufderhar"
+                        },
+                        {
+                          "id": 19,
+                          "name": "Delia Rowe"
+                        },
+                        {
+                          "id": 20,
+                          "name": "Ms. Christine Shields"
+                        },
+                        {
+                          "id": 21,
+                          "name": "Ms. Allene Simonis IV"
+                        },
+                        {
+                          "id": 22,
+                          "name": "Prof. Verona Littel DVM"
+                        },
+                        {
+                          "id": 23,
+                          "name": "Prof. Floyd Blanda"
+                        },
+                        {
+                          "id": 24,
+                          "name": "Keshawn Erdman"
+                        },
+                        {
+                          "id": 25,
+                          "name": "Patsy Gorczany"
+                        },
+                        {
+                          "id": 26,
+                          "name": "May Kertzmann"
                         }
-                      }
+                      ]
                     }
                   }
                 }
-              },
-              "headers": {}
-            },
-            "403": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "您没有权限执行此操作",
-                        "data": null
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "参数校验失败",
-                        "data": {
-                          "name": [
-                            "课程名称不能为空"
-                          ],
-                          "year_month": [
-                            "年月格式必须为YYYY-MM"
-                          ],
-                          "fee": [
-                            "费用必须为数字"
-                          ]
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            }
-          },
-          "security": []
-        }
-      },
-      "/api/courses/{course}/attach-students": {
-        "post": {
-          "summary": "关联学生到课程",
-          "deprecated": false,
-          "description": "",
-          "tags": [],
-          "parameters": [
-            {
-              "name": "course",
-              "in": "path",
-              "description": "",
-              "required": true,
-              "example": "92",
-              "schema": {
-                "type": "string"
               }
             },
-            {
-              "name": "Authorization",
-              "in": "header",
-              "description": "老师的 token",
-              "required": true,
-              "example": "{{TeacherBearerToken}}",
-              "schema": {
-                "type": "string"
-              }
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/teacher-statistics": {
+      "get": {
+        "summary": "获取老师的统计信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": true,
+            "example": "{{TeacherBearerToken}}",
+            "schema": {
+              "type": "string"
             }
-          ],
-          "requestBody": {
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "student_ids": {
-                      "type": "array",
-                      "items": {
-                        "type": "integer"
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "course_count": {
+                          "type": "integer",
+                          "description": "课程数"
+                        },
+                        "invoice_count": {
+                          "type": "integer",
+                          "description": "账单总数"
+                        }
                       },
-                      "description": "学生 user_ids"
+                      "required": [
+                        "course_count",
+                        "invoice_count"
+                      ]
                     }
                   },
                   "required": [
-                    "student_ids"
+                    "code",
+                    "message",
+                    "data"
                   ]
                 },
-                "example": {
-                  "student_ids": [
-                    7,
-                    8,
-                    9,
-                    10,
-                    11
-                  ]
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "integer",
-                        "description": "业务码 0 代表成功，非 0 表示失败"
-                      },
-                      "message": {
-                        "type": "string"
-                      },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
                       "data": {
-                        "type": "null"
-                      }
-                    },
-                    "required": [
-                      "code",
-                      "message",
-                      "data"
-                    ]
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Success",
-                      "value": {
-                        "code": 0,
-                        "message": "课程学生设置成功",
-                        "data": null
+                        "course_count": 5,
+                        "invoice_count": 15
                       }
                     }
                   }
                 }
-              },
-              "headers": {}
+              }
             },
-            "403": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "您只能关联学生到自己的课程",
-                        "data": null
-                      }
-                    },
-                    "2": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "您没有权限执行此操作",
-                        "data": null
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "参数校验失败",
-                        "data": {
-                          "student": [
-                            "学生必须为数组",
-                            "选择的学生不存在或不是学生身份"
-                          ]
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/student-statistics": {
+      "get": {
+        "summary": "获取学生的统计信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "学生的 token",
+            "required": true,
+            "example": "{{StudentBearerToken}}",
+            "schema": {
+              "type": "string"
             }
-          },
-          "security": []
-        }
-      },
-      "/api/courses/my": {
-        "get": {
-          "summary": "查看我的课程",
-          "deprecated": false,
-          "description": "",
-          "tags": [],
-          "parameters": [
-            {
-              "name": "page",
-              "in": "query",
-              "description": "当前页",
-              "required": false,
-              "example": 1,
-              "schema": {
-                "type": "integer"
-              }
-            },
-            {
-              "name": "per_page",
-              "in": "query",
-              "description": "每页显示数量",
-              "required": false,
-              "example": 15,
-              "schema": {
-                "type": "integer"
-              }
-            },
-            {
-              "name": "year_month",
-              "in": "query",
-              "description": "课程年月，格式: YYYY-MM",
-              "required": false,
-              "example": "2023-07",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "Authorization",
-              "in": "header",
-              "description": "学生token",
-              "required": true,
-              "example": "{{StudentBearerToken}}",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "integer",
-                        "description": "业务码 0 代表成功，非 0 表示失败"
-                      },
-                      "message": {
-                        "type": "string"
-                      },
-                      "data": {
-                        "type": "object",
-                        "properties": {
-                          "current_page": {
-                            "type": "integer",
-                            "description": "当前页"
-                          },
-                          "data": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "integer",
-                                  "description": "课程id"
-                                },
-                                "name": {
-                                  "type": "string",
-                                  "description": "课程名字"
-                                },
-                                "year_month": {
-                                  "type": "string",
-                                  "description": "课程年月，格式： YYYY-MM"
-                                },
-                                "fee": {
-                                  "type": "string",
-                                  "description": "课程费用"
-                                },
-                                "teacher_id": {
-                                  "type": "integer",
-                                  "description": "课程老师id"
-                                },
-                                "teacher": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "integer",
-                                      "description": "课程老师id"
-                                    },
-                                    "name": {
-                                      "type": "string",
-                                      "description": "课程老师名字"
-                                    }
-                                  },
-                                  "required": [
-                                    "id",
-                                    "name"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "name",
-                                "year_month",
-                                "fee",
-                                "teacher_id",
-                                "teacher"
-                              ]
-                            }
-                          },
-                          "first_page_url": {
-                            "type": "string"
-                          },
-                          "from": {
-                            "type": "integer"
-                          },
-                          "last_page": {
-                            "type": "integer"
-                          },
-                          "last_page_url": {
-                            "type": "string"
-                          },
-                          "links": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "url": {
-                                  "type": "string",
-                                  "nullable": true
-                                },
-                                "label": {
-                                  "type": "string"
-                                },
-                                "active": {
-                                  "type": "boolean"
-                                }
-                              },
-                              "required": [
-                                "url",
-                                "label",
-                                "active"
-                              ]
-                            }
-                          },
-                          "next_page_url": {
-                            "type": "null"
-                          },
-                          "path": {
-                            "type": "string"
-                          },
-                          "per_page": {
-                            "type": "integer",
-                            "description": "每页数量"
-                          },
-                          "prev_page_url": {
-                            "type": "null"
-                          },
-                          "to": {
-                            "type": "integer"
-                          },
-                          "total": {
-                            "type": "integer",
-                            "description": "总数"
-                          }
-                        },
-                        "required": [
-                          "current_page",
-                          "data",
-                          "first_page_url",
-                          "from",
-                          "last_page",
-                          "last_page_url",
-                          "links",
-                          "next_page_url",
-                          "path",
-                          "per_page",
-                          "prev_page_url",
-                          "to",
-                          "total"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "code",
-                      "message",
-                      "data"
-                    ]
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Success",
-                      "value": {
-                        "code": 0,
-                        "message": "获取成功",
-                        "data": {
-                          "current_page": 1,
-                          "data": [
-                            {
-                              "id": 11,
-                              "name": "高等数学初级理论课程",
-                              "year_month": "2023-07-01",
-                              "fee": "8237.76",
-                              "teacher_id": 6,
-                              "teacher": {
-                                "id": 6,
-                                "name": "Madyson Ernser"
-                              }
-                            },
-                            {
-                              "id": 7,
-                              "name": "计算机基础高级研讨课程",
-                              "year_month": "2023-07-01",
-                              "fee": "404.89",
-                              "teacher_id": 5,
-                              "teacher": {
-                                "id": 5,
-                                "name": "Cordia Paucek III"
-                              }
-                            },
-                            {
-                              "id": 5,
-                              "name": "大学英语高级实践课程",
-                              "year_month": "2024-10-01",
-                              "fee": "4178.10",
-                              "teacher_id": 4,
-                              "teacher": {
-                                "id": 4,
-                                "name": "Eulalia Carter"
-                              }
-                            },
-                            {
-                              "id": 4,
-                              "name": "人工智能初级实践课程",
-                              "year_month": "2024-05-01",
-                              "fee": "6125.13",
-                              "teacher_id": 3,
-                              "teacher": {
-                                "id": 3,
-                                "name": "Dr. Frederic Cummings"
-                              }
-                            },
-                            {
-                              "id": 2,
-                              "name": "Web开发中级研讨课程",
-                              "year_month": "2023-04-01",
-                              "fee": "9306.31",
-                              "teacher_id": 2,
-                              "teacher": {
-                                "id": 2,
-                                "name": "Mrs. Precious Ebert"
-                              }
-                            }
-                          ],
-                          "first_page_url": "http://poper-edu-management-backend.local/api/courses/my?page=1",
-                          "from": 1,
-                          "last_page": 1,
-                          "last_page_url": "http://poper-edu-management-backend.local/api/courses/my?page=1",
-                          "links": [
-                            {
-                              "url": null,
-                              "label": "&laquo; Previous",
-                              "active": false
-                            },
-                            {
-                              "url": "http://poper-edu-management-backend.local/api/courses/my?page=1",
-                              "label": "1",
-                              "active": true
-                            },
-                            {
-                              "url": null,
-                              "label": "Next &raquo;",
-                              "active": false
-                            }
-                          ],
-                          "next_page_url": null,
-                          "path": "http://poper-edu-management-backend.local/api/courses/my",
-                          "per_page": 15,
-                          "prev_page_url": null,
-                          "to": 5,
-                          "total": 5
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            },
-            "403": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "您只能关联学生到自己的课程",
-                        "data": null
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "参数校验失败",
-                        "data": {
-                          "year_month": [
-                            "年月格式必须为YYYY"
-                          ],
-                          "page": [
-                            "页码必须为整数"
-                          ],
-                          "per_page": [
-                            "每页数量必须为整数"
-                          ]
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            }
-          },
-          "security": []
-        }
-      },
-      "/api/invoices/my": {
-        "get": {
-          "summary": "查看我的账单",
-          "deprecated": false,
-          "description": "",
-          "tags": [],
-          "parameters": [
-            {
-              "name": "page",
-              "in": "query",
-              "description": "当前页",
-              "required": false,
-              "example": "1",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "per_page",
-              "in": "query",
-              "description": "每页显示数量",
-              "required": false,
-              "example": "10",
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "status",
-              "in": "query",
-              "description": "状态：pending 待支付、paid 已支付、failed 支付失败",
-              "required": false,
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "Authorization",
-              "in": "header",
-              "description": "",
-              "required": true,
-              "example": "{{StudentBearerToken}}",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "integer",
-                        "description": "业务码 0 代表成功，非 0 表示失败"
-                      },
-                      "message": {
-                        "type": "string"
-                      },
-                      "data": {
-                        "type": "object",
-                        "properties": {
-                          "current_page": {
-                            "type": "integer"
-                          },
-                          "data": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "integer",
-                                  "description": "账单id"
-                                },
-                                "course_id": {
-                                  "type": "integer",
-                                  "description": "课程id"
-                                },
-                                "student_id": {
-                                  "type": "integer",
-                                  "description": "学生id"
-                                },
-                                "amount": {
-                                  "type": "string",
-                                  "description": "费用"
-                                },
-                                "status": {
-                                  "type": "string",
-                                  "description": "状态：pending 待支付、paid 已支付、failed 支付失败"
-                                },
-                                "course": {
-                                  "type": "object",
-                                  "properties": {
-                                    "id": {
-                                      "type": "integer",
-                                      "description": "课程id"
-                                    },
-                                    "name": {
-                                      "type": "string",
-                                      "description": "课程名字"
-                                    },
-                                    "year_month": {
-                                      "type": "string",
-                                      "description": "课程年月，格式：YYYY-MM"
-                                    }
-                                  },
-                                  "required": [
-                                    "id",
-                                    "name",
-                                    "year_month"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "course_id",
-                                "student_id",
-                                "amount",
-                                "status",
-                                "course"
-                              ]
-                            }
-                          },
-                          "first_page_url": {
-                            "type": "string"
-                          },
-                          "from": {
-                            "type": "integer"
-                          },
-                          "last_page": {
-                            "type": "integer"
-                          },
-                          "last_page_url": {
-                            "type": "string"
-                          },
-                          "links": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "url": {
-                                  "type": "string",
-                                  "nullable": true
-                                },
-                                "label": {
-                                  "type": "string"
-                                },
-                                "active": {
-                                  "type": "boolean"
-                                }
-                              },
-                              "required": [
-                                "url",
-                                "label",
-                                "active"
-                              ]
-                            }
-                          },
-                          "next_page_url": {
-                            "type": "null"
-                          },
-                          "path": {
-                            "type": "string"
-                          },
-                          "per_page": {
-                            "type": "integer"
-                          },
-                          "prev_page_url": {
-                            "type": "null"
-                          },
-                          "to": {
-                            "type": "integer"
-                          },
-                          "total": {
-                            "type": "integer"
-                          }
-                        },
-                        "required": [
-                          "current_page",
-                          "data",
-                          "first_page_url",
-                          "from",
-                          "last_page",
-                          "last_page_url",
-                          "links",
-                          "next_page_url",
-                          "path",
-                          "per_page",
-                          "prev_page_url",
-                          "to",
-                          "total"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "code",
-                      "message",
-                      "data"
-                    ]
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Success",
-                      "value": {
-                        "code": 0,
-                        "message": "获取成功",
-                        "data": {
-                          "current_page": 1,
-                          "data": [
-                            {
-                              "id": 67,
-                              "course_id": 11,
-                              "student_id": 16,
-                              "amount": "8237.76",
-                              "status": "pending",
-                              "course": {
-                                "id": 11,
-                                "name": "高等数学初级理论课程",
-                                "year_month": "2023-07"
-                              }
-                            },
-                            {
-                              "id": 45,
-                              "course_id": 7,
-                              "student_id": 16,
-                              "amount": "404.89",
-                              "status": "paid",
-                              "course": {
-                                "id": 7,
-                                "name": "计算机基础高级研讨课程",
-                                "year_month": "2023-07"
-                              }
-                            },
-                            {
-                              "id": 31,
-                              "course_id": 5,
-                              "student_id": 16,
-                              "amount": "4178.10",
-                              "status": "failed",
-                              "course": {
-                                "id": 5,
-                                "name": "大学英语高级实践课程",
-                                "year_month": "2024-10"
-                              }
-                            },
-                            {
-                              "id": 22,
-                              "course_id": 4,
-                              "student_id": 16,
-                              "amount": "6125.13",
-                              "status": "pending",
-                              "course": {
-                                "id": 4,
-                                "name": "人工智能初级实践课程",
-                                "year_month": "2024-05"
-                              }
-                            },
-                            {
-                              "id": 10,
-                              "course_id": 2,
-                              "student_id": 16,
-                              "amount": "9306.31",
-                              "status": "failed",
-                              "course": {
-                                "id": 2,
-                                "name": "Web开发中级研讨课程",
-                                "year_month": "2023-04"
-                              }
-                            }
-                          ],
-                          "first_page_url": "http://poper-edu-management-backend.local/api/invoices/my?page=1",
-                          "from": 1,
-                          "last_page": 1,
-                          "last_page_url": "http://poper-edu-management-backend.local/api/invoices/my?page=1",
-                          "links": [
-                            {
-                              "url": null,
-                              "label": "&laquo; Previous",
-                              "active": false
-                            },
-                            {
-                              "url": "http://poper-edu-management-backend.local/api/invoices/my?page=1",
-                              "label": "1",
-                              "active": true
-                            },
-                            {
-                              "url": null,
-                              "label": "Next &raquo;",
-                              "active": false
-                            }
-                          ],
-                          "next_page_url": null,
-                          "path": "http://poper-edu-management-backend.local/api/invoices/my",
-                          "per_page": 10,
-                          "prev_page_url": null,
-                          "to": 5,
-                          "total": 5
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            }
-          },
-          "security": []
-        }
-      },
-      "/api/invoices": {
-        "post": {
-          "summary": "创建账单",
-          "deprecated": false,
-          "description": "",
-          "tags": [],
-          "parameters": [
-            {
-              "name": "status",
-              "in": "query",
-              "description": "",
-              "required": false,
-              "schema": {
-                "type": "string"
-              }
-            },
-            {
-              "name": "Authorization",
-              "in": "header",
-              "description": "教师token",
-              "required": true,
-              "example": "{{TeacherBearerToken}}",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "course_id": {
-                      "type": "integer",
-                      "description": "课程id"
+                    "code": {
+                      "type": "integer"
                     },
-                    "student_id": {
-                      "type": "integer",
-                      "description": "学生id"
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "course_count": {
+                          "type": "integer",
+                          "description": "课程数"
+                        },
+                        "pending_invoice_count": {
+                          "type": "integer",
+                          "description": "待支付账单总数"
+                        }
+                      },
+                      "required": [
+                        "course_count",
+                        "pending_invoice_count"
+                      ]
                     }
                   },
                   "required": [
-                    "course_id",
-                    "student_id"
+                    "code",
+                    "message",
+                    "data"
                   ]
                 },
-                "example": {
-                  "course_id": 91,
-                  "student_id": 16
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "integer"
-                      },
-                      "message": {
-                        "type": "string"
-                      },
+                "examples": {
+                  "1": {
+                    "summary": "Success",
+                    "value": {
+                      "code": 0,
+                      "message": "获取成功",
                       "data": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "integer",
-                            "description": "账单id"
-                          },
-                          "course_id": {
-                            "type": "integer",
-                            "description": "课程id"
-                          },
-                          "student_id": {
-                            "type": "integer",
-                            "description": "学生user_id"
-                          },
-                          "amount": {
-                            "type": "string",
-                            "description": "费用"
-                          },
-                          "status": {
-                            "type": "string",
-                            "description": "状态：pending 待支付、paid 已支付、failed 支付失败"
-                          },
-                          "course": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer",
-                                "description": "课程id"
-                              },
-                              "name": {
-                                "type": "string",
-                                "description": "课程名字"
-                              },
-                              "year_month": {
-                                "type": "string",
-                                "description": "课程年月"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name",
-                              "year_month"
-                            ]
-                          },
-                          "student": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer",
-                                "description": "学生user_id"
-                              },
-                              "name": {
-                                "type": "string",
-                                "description": "学生姓名"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name"
-                            ]
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "course_id",
-                          "student_id",
-                          "amount",
-                          "status",
-                          "course",
-                          "student"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "code",
-                      "message",
-                      "data"
-                    ]
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Success",
-                      "value": {
-                        "code": 0,
-                        "message": "账单创建成功",
-                        "data": {
-                          "id": 80,
-                          "course_id": 91,
-                          "student_id": 16,
-                          "amount": "100.03",
-                          "status": "pending",
-                          "course": {
-                            "id": 91,
-                            "name": "数学课",
-                            "year_month": "2024-03"
-                          },
-                          "student": {
-                            "id": 16,
-                            "name": "Kaci Friesen"
-                          }
-                        }
+                        "course_count": 5,
+                        "pending_invoice_count": 15
                       }
                     }
                   }
                 }
-              },
-              "headers": {}
-            },
-            "403": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "您只能创建自己课程的账单",
-                        "data": null
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            },
-            "422": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "数据校验失败",
-                        "data": {
-                          "course_id": [
-                            "课程不能为空"
-                          ],
-                          "student_id": [
-                            "学生不存在或不是学生身份"
-                          ]
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            }
-          },
-          "security": []
-        }
-      },
-      "/api/invoices/{invoice}/send": {
-        "post": {
-          "summary": "发送账单",
-          "deprecated": false,
-          "description": "",
-          "tags": [],
-          "parameters": [
-            {
-              "name": "invoice",
-              "in": "path",
-              "description": "账单id",
-              "required": true,
-              "example": "80",
-              "schema": {
-                "type": "string"
               }
             },
-            {
-              "name": "Authorization",
-              "in": "header",
-              "description": "",
-              "required": true,
-              "example": "{{TeacherBearerToken}}",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "code": {
-                        "type": "integer"
-                      },
-                      "message": {
-                        "type": "string"
-                      },
-                      "data": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "integer",
-                            "description": "账单id"
-                          },
-                          "course_id": {
-                            "type": "integer",
-                            "description": "课程id"
-                          },
-                          "student_id": {
-                            "type": "integer",
-                            "description": "学生user_id"
-                          },
-                          "amount": {
-                            "type": "string",
-                            "description": "费用"
-                          },
-                          "status": {
-                            "type": "string",
-                            "description": "状态：pending 待支付、paid 已支付、failed 支付失败"
-                          },
-                          "course": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer",
-                                "description": "课程id"
-                              },
-                              "name": {
-                                "type": "string",
-                                "description": "课程名字"
-                              },
-                              "year_month": {
-                                "type": "string",
-                                "description": "课程年月"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name",
-                              "year_month"
-                            ]
-                          },
-                          "student": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer",
-                                "description": "学生user_id"
-                              },
-                              "name": {
-                                "type": "string",
-                                "description": "学生姓名"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "name"
-                            ]
-                          }
-                        },
-                        "required": [
-                          "id",
-                          "course_id",
-                          "student_id",
-                          "amount",
-                          "status",
-                          "course",
-                          "student"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "code",
-                      "message",
-                      "data"
-                    ]
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Success",
-                      "value": {
-                        "code": 0,
-                        "message": "账单已发送",
-                        "data": {
-                          "id": 80,
-                          "course_id": 91,
-                          "student_id": 16,
-                          "amount": "100.03",
-                          "status": "pending",
-                          "course": {
-                            "id": 91,
-                            "name": "数学课",
-                            "year_month": "2024-03"
-                          },
-                          "student": {
-                            "id": 16,
-                            "name": "Kaci Friesen"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            },
-            "403": {
-              "description": "",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {}
-                  },
-                  "examples": {
-                    "1": {
-                      "summary": "Exception",
-                      "value": {
-                        "code": 1,
-                        "message": "只能发送待处理的账单",
-                        "data": null
-                      }
-                    }
-                  }
-                }
-              },
-              "headers": {}
-            }
-          },
-          "security": []
-        }
+            "headers": {}
+          }
+        },
+        "security": []
       }
-    },
-    "components": {
-      "schemas": {},
-      "securitySchemes": {}
-    },
-    "servers": [
-      {
-        "url": "http://dev-cn.your-api-server.com",
-        "description": "Develop Env"
-      }
-    ]
-  }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": []
+}

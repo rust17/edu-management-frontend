@@ -1,49 +1,63 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Search } from '@element-plus/icons-vue'
+import request from '@/http/request'
+import { courseEndpoints } from '@/http/endpoints/course'
+import { DEFAULT_PAGINATION, type PaginationType } from '@/http/pagination'
 
 const router = useRouter()
 
 interface Course {
   id: number
   name: string
-  month: string
-  fee: number
-  studentCount: number
-  billStatus: 'pending' | 'partial' | 'completed'
+  year_month: string
+  fee: string
+  teacher_id: number
+  students: number
 }
 
-// 模拟数据，实际项目中应该从API获取
-const courseList = ref<Course[]>([
-  {
-    id: 1,
-    name: '高中数学',
-    month: '2024-03',
-    fee: 500,
-    studentCount: 3,
-    billStatus: 'pending'
-  },
-  {
-    id: 2,
-    name: '初中物理',
-    month: '2024-03',
-    fee: 400,
-    studentCount: 2,
-    billStatus: 'completed'
-  }
-])
+// 课程列表数据
+const courseList = ref<Course[]>([])
 
 // 搜索条件
 const searchForm = ref({
   keyword: '',
-  month: '',
-  billStatus: ''
+  year_month: ''
 })
 
 // 表格加载状态
 const loading = ref(false)
+
+// 分页
+const pagination = ref<PaginationType>(DEFAULT_PAGINATION())
+
+// 获取课程列表
+const fetchCourses = async () => {
+  loading.value = true
+  try {
+    const response = await request({
+      url: courseEndpoints.teacher,
+      method: 'get',
+      params: {
+        page: pagination.value.currentPage,
+        per_page: pagination.value.pageSize,
+        keyword: searchForm.value.keyword,
+        year_month: searchForm.value.year_month
+      }
+    })
+
+    const { data } = response.data
+    courseList.value = data.data
+    pagination.value.total = data.total
+    pagination.value.currentPage = data.current_page
+  } catch (error) {
+    console.error('获取课程列表失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
 
 // 处理创建课程
 const handleCreate = () => {
@@ -59,7 +73,7 @@ const handleView = (id: number) => {
 const handleSendBill = async (course: Course) => {
   try {
     await ElMessageBox.confirm(
-      `确认向所有学生发送 ${course.name} (${course.month}) 的账单吗？`,
+      `确认向所有学生发送 ${course.name} (${course.year_month}) 的账单吗？`,
       '发送账单',
       {
         confirmButtonText: '确认发送',
@@ -75,28 +89,31 @@ const handleSendBill = async (course: Course) => {
   }
 }
 
-// 获取账单状态显示
-const getBillStatusTag = (status: Course['billStatus']) => {
-  const statusMap = {
-    pending: {
-      type: 'warning',
-      label: '未发送'
-    },
-    partial: {
-      type: 'info',
-      label: '部分完成'
-    },
-    completed: {
-      type: 'success',
-      label: '已完成'
-    }
+// 重置搜索条件
+const resetSearch = () => {
+  searchForm.value = {
+    keyword: '',
+    year_month: ''
   }
-  return statusMap[status]
+  pagination.value.currentPage = 1
+  fetchCourses()
 }
 
-// 在 script setup 中添加分页相关的响应式数据
-const currentPage = ref(1)
-const pageSize = ref(10)
+// 处理搜索
+const handleSearch = () => {
+  pagination.value.currentPage = 1
+  fetchCourses()
+}
+
+// 处理分页变化
+const handlePageChange = (page: number) => {
+  pagination.value.currentPage = page
+  fetchCourses()
+}
+
+onMounted(() => {
+  fetchCourses()
+})
 </script>
 
 <template>
@@ -119,25 +136,18 @@ const pageSize = ref(10)
             :prefix-icon="Search"
           />
         </el-form-item>
-        <el-form-item label="月份">
+        <el-form-item label="年月">
           <el-date-picker
-            v-model="searchForm.month"
+            v-model="searchForm.year_month"
             type="month"
-            placeholder="选择月份"
+            placeholder="选择年月"
+            format="YYYY-MM"
+            value-format="YYYY-MM"
           />
         </el-form-item>
-        <el-form-item label="账单状态">
-          <el-select v-model="searchForm.billStatus" placeholder="选择状态">
-            <el-option label="未发送" value="pending" />
-            <el-option label="部分完成" value="partial" />
-            <el-option label="已完成" value="completed" />
-          </el-select>
-        </el-form-item>
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
-          <el-button @click="searchForm = { keyword: '', month: '', billStatus: '' }">
-            重置
-          </el-button>
+          <el-button type="primary" @click="handleSearch">搜索</el-button>
+          <el-button @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -150,23 +160,13 @@ const pageSize = ref(10)
         style="width: 100%"
       >
         <el-table-column prop="name" label="课程名称" min-width="150" />
-        <el-table-column prop="month" label="年月" width="120" />
+        <el-table-column prop="year_month" label="年月" width="120" />
         <el-table-column label="费用" width="120">
           <template #default="{ row }">
             ¥{{ row.fee }}
           </template>
         </el-table-column>
-        <el-table-column prop="studentCount" label="学生数" width="100" />
-        <el-table-column label="账单状态" width="120">
-          <template #default="{ row }">
-            <el-tag
-              :type="getBillStatusTag(row.billStatus).type"
-              size="small"
-            >
-              {{ getBillStatusTag(row.billStatus).label }}
-            </el-tag>
-          </template>
-        </el-table-column>
+        <el-table-column prop="students" label="学生数" width="100" />
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <el-button
@@ -179,7 +179,6 @@ const pageSize = ref(10)
             <el-button
               link
               type="primary"
-              :disabled="row.billStatus === 'completed'"
               @click="handleSendBill(row)"
             >
               发送账单
@@ -191,9 +190,10 @@ const pageSize = ref(10)
       <!-- 分页 -->
       <div class="pagination">
         <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :total="20"
+          v-model:current-page="pagination.currentPage"
+          v-model:page-size="pagination.pageSize"
+          :total="pagination.total"
+          @current-change="handlePageChange"
           background
           layout="prev, pager, next, jumper"
         />

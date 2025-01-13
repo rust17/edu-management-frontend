@@ -1,55 +1,46 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search } from '@element-plus/icons-vue'
+import request from '@/http/request'
+import { courseEndpoints } from '@/http/endpoints/course'
+import { DEFAULT_PAGINATION, type PaginationType } from '@/http/pagination'
 
 const router = useRouter()
 
+// 定义课程类型
 interface Course {
   id: number
   name: string
-  month: string
-  fee: number
-  teacherName: string
-  billStatus: 'pending' | 'paid'
+  year_month: string
+  fee: string
+  teacher: {
+    id: number
+    name: string
+  }
+  invoice_status: 'pending' | 'paid' | 'failed'
+  invoice_send_at: string
+  paid_at: string
 }
 
-// 模拟数据
-const courseList = ref<Course[]>([
-  {
-    id: 1,
-    name: '高中数学',
-    month: '2024-03',
-    fee: 500,
-    teacherName: '张老师',
-    billStatus: 'pending'
-  },
-  {
-    id: 2,
-    name: '初中物理',
-    month: '2024-03',
-    fee: 400,
-    teacherName: '王老师',
-    billStatus: 'paid'
-  }
-])
+// 课程列表数据
+const courseList = ref<Course[]>([])
 
 // 搜索条件
 const searchForm = ref({
   keyword: '',
-  month: '',
-  billStatus: ''
+  year_month: '',
+  invoice_status: ''
 })
 
 // 表格加载状态
 const loading = ref(false)
 
 // 分页
-const currentPage = ref(1)
-const pageSize = ref(10)
+const pagination = ref<PaginationType>(DEFAULT_PAGINATION())
 
 // 获取账单状态显示
-const getBillStatusTag = (status: Course['billStatus']) => {
+const getBillStatusTag = (status: Course['invoice_status']) => {
   const statusMap = {
     pending: {
       type: 'warning',
@@ -58,18 +49,62 @@ const getBillStatusTag = (status: Course['billStatus']) => {
     paid: {
       type: 'success',
       label: '已支付'
+    },
+    failed: {
+      type: 'danger',
+      label: '支付失败'
     }
   }
   return statusMap[status]
+}
+
+// 获取课程列表
+const fetchCourses = async () => {
+  loading.value = true
+  try {
+    const response = await request({
+      url: courseEndpoints.student,
+      method: 'get',
+      params: {
+        page: pagination.value.currentPage,
+        per_page: pagination.value.pageSize,
+        keyword: searchForm.value.keyword,
+        year_month: searchForm.value.year_month
+      }
+    })
+
+    const { data } = response.data
+    courseList.value = data.data
+    pagination.value.total = data.total
+    pagination.value.currentPage = data.current_page
+  } catch (error) {
+    console.error('获取课程列表失败:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
 // 重置搜索条件
 const resetSearch = () => {
   searchForm.value = {
     keyword: '',
-    month: '',
-    billStatus: ''
+    year_month: '',
+    invoice_status: ''
   }
+  pagination.value.currentPage = 1
+  fetchCourses()
+}
+
+// 处理搜索
+const handleSearch = () => {
+  pagination.value.currentPage = 1
+  fetchCourses()
+}
+
+// 处理分页变化
+const handlePageChange = (page: number) => {
+  pagination.value.currentPage = page
+  fetchCourses()
 }
 
 // 处理查看详情
@@ -81,6 +116,10 @@ const handleView = (id: number) => {
 const handlePay = (course: Course) => {
   router.push(`/student/courses/${course.id}?action=pay`)
 }
+
+onMounted(() => {
+  fetchCourses()
+})
 </script>
 
 <template>
@@ -102,26 +141,21 @@ const handlePay = (course: Course) => {
         </el-form-item>
         <el-form-item label="月份">
           <el-date-picker
-            v-model="searchForm.month"
+            v-model="searchForm.year_month"
             type="month"
             placeholder="选择月份"
+            value-format="YYYY-MM"
           />
         </el-form-item>
-        <el-form-item label="账单状态">
-          <el-select v-model="searchForm.billStatus" placeholder="选择状态">
-            <el-option label="待支付" value="pending" />
-            <el-option label="已支付" value="paid" />
-          </el-select>
-        </el-form-item>
         <el-form-item>
-          <el-button type="primary">搜索</el-button>
+          <el-button type="primary" @click="handleSearch">搜索</el-button>
           <el-button @click="resetSearch">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <!-- 课程列表 -->
-    <div class="course-grid">
+    <div class="course-grid" v-loading="loading">
       <el-card
         v-for="course in courseList"
         :key="course.id"
@@ -131,20 +165,20 @@ const handlePay = (course: Course) => {
         <div class="card-header">
           <h3>{{ course.name }}</h3>
           <el-tag
-            :type="getBillStatusTag(course.billStatus).type"
+            :type="getBillStatusTag(course.invoice_status).type"
             size="small"
           >
-            {{ getBillStatusTag(course.billStatus).label }}
+            {{ getBillStatusTag(course.invoice_status).label }}
           </el-tag>
         </div>
         <div class="card-content">
           <div class="info-item">
             <label>课程年月</label>
-            <span>{{ course.month }}</span>
+            <span>{{ course.year_month }}</span>
           </div>
           <div class="info-item">
             <label>任课教师</label>
-            <span>{{ course.teacherName }}</span>
+            <span>{{ course.teacher.name }}</span>
           </div>
           <div class="info-item">
             <label>课程费用</label>
@@ -160,7 +194,7 @@ const handlePay = (course: Course) => {
             查看详情
           </el-button>
           <el-button
-            v-if="course.billStatus === 'pending'"
+            v-if="course.invoice_status === 'pending'"
             type="primary"
             @click="handlePay(course)"
           >
@@ -173,9 +207,10 @@ const handlePay = (course: Course) => {
     <!-- 分页 -->
     <div class="pagination">
       <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :total="20"
+        v-model:current-page="pagination.currentPage"
+        v-model:page-size="pagination.pageSize"
+        :total="pagination.total"
+        @current-change="handlePageChange"
         background
         layout="prev, pager, next, jumper"
       />

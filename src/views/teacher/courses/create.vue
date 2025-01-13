@@ -4,6 +4,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import request from '@/http/request'
+import { courseEndpoints } from '@/http/endpoints/course'
+import { studentEndpoints } from '@/http/endpoints/student'
 
 const router = useRouter()
 const route = useRoute()
@@ -11,9 +14,9 @@ const isEdit = computed(() => route.query.id)
 
 interface CourseForm {
   name: string
-  month: string
+  year_month: string
   fee: number | undefined
-  students: number[]
+  student_ids: number[]
 }
 
 const formRef = ref<FormInstance>()
@@ -21,35 +24,67 @@ const loading = ref(false)
 
 const courseForm = reactive<CourseForm>({
   name: '',
-  month: '',
+  year_month: '',
   fee: undefined,
-  students: []
+  student_ids: []
 })
 
 const rules: FormRules = {
   name: [
     { required: true, message: '请输入课程名称', trigger: 'blur' },
-    { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+    { max: 255, message: '课程名称最多 255 个字符', trigger: 'blur' }
   ],
-  month: [
-    { required: true, message: '请选择年月', trigger: 'change' }
+  year_month: [
+    { required: true, message: '请选择年月', trigger: 'change' },
+    {
+      pattern: /^\d{4}-\d{2}$/,
+      message: '年月格式必须为YYYY-MM',
+      trigger: 'change'
+    }
   ],
   fee: [
     { required: true, message: '请输入课程费用', trigger: 'blur' },
-    { type: 'number', min: 0, message: '费用必须大于等于0', trigger: 'blur' }
+    { type: 'number', min: 0, message: '费用不能小于0', trigger: 'blur' }
   ],
-  students: [
+  student_ids: [
     { required: true, message: '请选择学生', trigger: 'change' },
     { type: 'array', min: 1, message: '至少选择一个学生', trigger: 'change' }
   ]
 }
 
-// 模拟学生列表数据
-const studentOptions = ref([
-  { id: 1, name: '李同学' },
-  { id: 2, name: '王同学' },
-  { id: 3, name: '张同学' }
-])
+interface Student {
+  id: number
+  name: string
+}
+
+// 学生列表数据
+const studentOptions = ref<Student[]>([])
+const studentLoading = ref(false)
+
+// 获取学生列表
+const fetchStudents = async (keyword?: string) => {
+  studentLoading.value = true
+  try {
+    const response = await request({
+      url: studentEndpoints.list,
+      method: 'get',
+      params: { keyword }
+    })
+
+    studentOptions.value = response.data.data
+  } catch (error) {
+    console.error('获取学生列表失败:', error)
+  } finally {
+    studentLoading.value = false
+  }
+}
+
+// 处理学生搜索
+const handleStudentSearch = (query: string) => {
+  if (query) {
+    fetchStudents(query)
+  }
+}
 
 // 处理表单提交
 const handleSubmit = async (formEl: FormInstance | undefined) => {
@@ -59,13 +94,24 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
     if (valid) {
       loading.value = true
       try {
-        // 这里应该调用创建/编辑课程的 API
-        await new Promise(resolve => setTimeout(resolve, 1000)) // 模拟API调用
+        const requestConfig = {
+          url: isEdit.value
+            ? courseEndpoints.update(Number(route.query.id))
+            : courseEndpoints.create,
+          method: isEdit.value ? 'put' : 'post',
+          data: {
+            name: courseForm.name,
+            year_month: courseForm.year_month,
+            fee: courseForm.fee,
+            student_ids: courseForm.student_ids
+          }
+        }
 
+        await request(requestConfig)
         ElMessage.success(isEdit.value ? '课程更新成功' : '课程创建成功')
         router.push('/teacher/courses')
       } catch (error) {
-        ElMessage.error('操作失败，请重试')
+        console.error(isEdit.value ? '更新课程失败:' : '创建课程失败:', error)
       } finally {
         loading.value = false
       }
@@ -73,30 +119,44 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
   })
 }
 
+// 获取课程详情
+const fetchCourseDetail = async (id: number) => {
+  loading.value = true
+  try {
+    const response = await request({
+      url: courseEndpoints.teacherDetail(id),
+      method: 'get'
+    })
+
+    const { data } = response.data
+    // 更新表单数据
+    Object.assign(courseForm, {
+      name: data.name,
+      year_month: data.year_month,
+      fee: Number(data.fee),
+      student_ids: data.students.map((student: any) => student.id)
+    })
+  } catch (error) {
+    console.error('获取课程信息失败:', error)
+    // 获取失败时返回列表页
+    router.push('/teacher/courses')
+  } finally {
+    loading.value = false
+  }
+}
+
 // 处理取消
 const handleCancel = () => {
   router.back()
 }
 
-// 如果是编辑模式，获取课程详情
-onMounted(async () => {
+onMounted(() => {
+  // 初始加载学生列表
+  fetchStudents()
+
+  // 如果是编辑模式，获取课程详情
   if (isEdit.value) {
-    loading.value = true
-    try {
-      // 这里应该调用获取课程详情的 API
-      // 模拟数据
-      const courseDetail = {
-        name: '高中数学',
-        month: '2024-03',
-        fee: 500,
-        students: [1, 2]
-      }
-      Object.assign(courseForm, courseDetail)
-    } catch (error) {
-      ElMessage.error('获取课程信息失败')
-    } finally {
-      loading.value = false
-    }
+    fetchCourseDetail(Number(route.query.id))
   }
 })
 </script>
@@ -125,14 +185,14 @@ onMounted(async () => {
           <el-input
             v-model="courseForm.name"
             placeholder="请输入课程名称"
-            maxlength="20"
+            maxlength="255"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="年月" prop="month">
+        <el-form-item label="年月" prop="year_month">
           <el-date-picker
-            v-model="courseForm.month"
+            v-model="courseForm.year_month"
             type="month"
             placeholder="请选择年月"
             format="YYYY-MM"
@@ -146,15 +206,20 @@ onMounted(async () => {
             :min="0"
             :precision="2"
             :step="100"
+            style="width: 200px"
           >
             <template #prefix>¥</template>
           </el-input-number>
         </el-form-item>
 
-        <el-form-item label="选择学生" prop="students">
+        <el-form-item label="选择学生" prop="student_ids">
           <el-select
-            v-model="courseForm.students"
+            v-model="courseForm.student_ids"
             multiple
+            filterable
+            remote
+            :remote-method="handleStudentSearch"
+            :loading="studentLoading"
             placeholder="请选择学生"
             style="width: 100%"
           >

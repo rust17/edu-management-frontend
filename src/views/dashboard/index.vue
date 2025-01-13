@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import request from '@/http/request'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -13,21 +14,43 @@ const userName = computed(() => {
   return userStore.userInfo?.name + ' ' + displayRole
 })
 
-// 统计数据（实际项目中应该从API获取）
+// 统计数据
+const statsData = ref({
+  course_count: 0,
+  invoice_count: 0,
+  pending_invoice_count: 0
+})
+
+// 获取统计数据
+const fetchStats = async () => {
+  try {
+    const response = await request({
+      url: userRole.value === 'teacher' ? '/teacher-statistics' : '/student-statistics',
+      method: 'get'
+    })
+
+    const { data } = response.data
+    statsData.value = data
+  } catch (error) {
+    console.error('获取统计数据失败:', error)
+  }
+}
+
+// 统计卡片数据
 const stats = computed(() => {
   if (userRole.value === 'teacher') {
     return {
       courses: {
         title: '课程总数',
-        value: 12,
+        value: statsData.value.course_count,
         unit: '个',
         icon: 'Document',
         color: '#1890ff',
         path: '/teacher/courses'
       },
       bills: {
-        title: '待处理账单',
-        value: 3,
+        title: '账单总数',
+        value: statsData.value.invoice_count,
         unit: '个',
         icon: 'Histogram',
         color: '#52c41a',
@@ -38,7 +61,7 @@ const stats = computed(() => {
     return {
       courses: {
         title: '我的课程',
-        value: 3,
+        value: statsData.value.course_count,
         unit: '个',
         icon: 'Document',
         color: '#1890ff',
@@ -46,7 +69,7 @@ const stats = computed(() => {
       },
       bills: {
         title: '待支付账单',
-        value: 1,
+        value: statsData.value.pending_invoice_count,
         unit: '个',
         icon: 'Histogram',
         color: '#faad14',
@@ -54,6 +77,10 @@ const stats = computed(() => {
       }
     }
   }
+})
+
+onMounted(() => {
+  fetchStats()
 })
 
 const handleCardClick = (path: string) => {

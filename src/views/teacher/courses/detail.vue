@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
+import request from '@/http/request'
+import { courseEndpoints } from '@/http/endpoints/course'
 
 const router = useRouter()
 const route = useRoute()
@@ -11,38 +13,33 @@ const courseId = route.params.id
 interface Student {
   id: number
   name: string
-  billStatus: 'pending' | 'paid'
+  invoice_status: 'pending' | 'paid' | 'failed' | null
 }
 
 interface CourseDetail {
   id: number
   name: string
-  month: string
-  fee: number
+  year_month: string
+  fee: string
+  teacher_id: number
   students: Student[]
 }
 
 const loading = ref(false)
-const courseDetail = ref<CourseDetail>({
-  id: 1,
-  name: '高中数学',
-  month: '2024-03',
-  fee: 500,
-  students: [
-    { id: 1, name: '李同学', billStatus: 'pending' },
-    { id: 2, name: '王同学', billStatus: 'paid' }
-  ]
-})
+const courseDetail = ref<CourseDetail | null>(null)
 
 // 获取课程详情
 const fetchCourseDetail = async () => {
   loading.value = true
   try {
-    // 这里应该调用获取课程详情的 API
-    // 使用模拟数据
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    const response = await request({
+      url: courseEndpoints.teacherDetail(Number(courseId)),
+      method: 'get'
+    })
+
+    courseDetail.value = response.data.data
   } catch (error) {
-    ElMessage.error('获取课程信息失败')
+    console.error('获取课程信息失败:', error)
   } finally {
     loading.value = false
   }
@@ -61,9 +58,10 @@ const handleBack = () => {
 // 处理发送账单
 const handleSendBill = async (studentId?: number) => {
   const isSingle = !!studentId
+  const student = courseDetail.value?.students.find(s => s.id === studentId)
   const confirmMessage = isSingle
-    ? `确认向 ${courseDetail.value.students.find(s => s.id === studentId)?.name} 发送账单？`
-    : `确认向所有未支付的学生发送账单？`
+    ? `确认向 ${student?.name} 发送账单？`
+    : '确认向所有未支付的学生发送账单？'
 
   try {
     await ElMessageBox.confirm(confirmMessage, '发送账单', {
@@ -80,7 +78,7 @@ const handleSendBill = async (studentId?: number) => {
 }
 
 // 获取账单状态显示
-const getBillStatusTag = (status: Student['billStatus']) => {
+const getBillStatusTag = (status: Student['invoice_status']) => {
   const statusMap = {
     pending: {
       type: 'warning',
@@ -89,9 +87,17 @@ const getBillStatusTag = (status: Student['billStatus']) => {
     paid: {
       type: 'success',
       label: '已支付'
+    },
+    failed: {
+      type: 'danger',
+      label: '支付失败'
+    },
+    null: {
+      type: 'info',
+      label: '未发送'
     }
   }
-  return statusMap[status]
+  return statusMap[status || 'null']
 }
 
 onMounted(() => {
@@ -122,7 +128,7 @@ onMounted(() => {
     </div>
 
     <!-- 基本信息 -->
-    <el-card class="info-card">
+    <el-card class="info-card" v-if="courseDetail">
       <template #header>
         <div class="card-header">
           <h3>基本信息</h3>
@@ -133,7 +139,7 @@ onMounted(() => {
           {{ courseDetail.name }}
         </el-descriptions-item>
         <el-descriptions-item label="年月">
-          {{ courseDetail.month }}
+          {{ courseDetail.year_month }}
         </el-descriptions-item>
         <el-descriptions-item label="课程费用">
           <span class="price">¥{{ courseDetail.fee }}</span>
@@ -145,7 +151,7 @@ onMounted(() => {
     </el-card>
 
     <!-- 学生列表 -->
-    <el-card class="student-card">
+    <el-card class="student-card" v-if="courseDetail">
       <template #header>
         <div class="card-header">
           <h3>学生名单</h3>
@@ -156,10 +162,10 @@ onMounted(() => {
         <el-table-column label="账单状态" width="120">
           <template #default="{ row }">
             <el-tag
-              :type="getBillStatusTag(row.billStatus).type"
+              :type="getBillStatusTag(row.invoice_status).type"
               size="small"
             >
-              {{ getBillStatusTag(row.billStatus).label }}
+              {{ getBillStatusTag(row.invoice_status).label }}
             </el-tag>
           </template>
         </el-table-column>
@@ -168,10 +174,10 @@ onMounted(() => {
             <el-button
               link
               type="primary"
-              :disabled="row.billStatus === 'paid'"
+              :disabled="row.invoice_status === 'paid'"
               @click="handleSendBill(row.id)"
             >
-              发送账单
+              {{ row.invoice_status ? '重新发送' : '发送账单' }}
             </el-button>
           </template>
         </el-table-column>
