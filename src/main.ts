@@ -7,6 +7,9 @@ import router from './router'
 import './assets/main.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+// 预加载 Omise 脚本
+import './helpers/payment'
+
 const app = createApp(App)
 
 app.use(createPinia())

@@ -6,6 +6,7 @@ import request from '@/http/request'
 import { courseEndpoints } from '@/http/endpoints/course'
 import { DEFAULT_PAGINATION, type PaginationType } from '@/http/pagination'
 import { getBillStatusTag } from '@/helpers/invoice'
+import OpnPaymentButton from '@/components/OpnPaymentButton.vue'
 
 const router = useRouter()
 
@@ -39,6 +40,9 @@ const loading = ref(false)
 
 // 分页
 const pagination = ref<PaginationType>(DEFAULT_PAGINATION())
+
+// 支付相关
+const payLoadingMap = ref<Map<number, boolean>>(new Map())
 
 // 获取课程列表
 const fetchCourses = async () => {
@@ -94,9 +98,9 @@ const handleView = (id: number) => {
   router.push(`/student/courses/${id}`)
 }
 
-// 处理支付
-const handlePay = (course: Course) => {
-  router.push(`/student/courses/${course.id}?action=pay`)
+// 处理支付成功
+const handlePaySuccess = async () => {
+  await fetchCourses() // 刷新课程列表
 }
 
 onMounted(() => {
@@ -175,13 +179,14 @@ onMounted(() => {
           >
             查看详情
           </el-button>
-          <el-button
+          <OpnPaymentButton
             v-if="course.invoice_status === 'pending'"
-            type="primary"
-            @click="handlePay(course)"
-          >
-            立即支付
-          </el-button>
+            :loading="payLoadingMap.get(course.id) || false"
+            @update:loading="(value) => payLoadingMap.set(course.id, value)"
+            :amount="course.fee"
+            :description="`支付课程 ${course.name} (${course.year_month})`"
+            @success="handlePaySuccess"
+          />
         </div>
       </el-card>
     </div>

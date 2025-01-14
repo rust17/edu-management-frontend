@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import request from '@/http/request'
 import { invoiceEndpoints } from '@/http/endpoints/invoice'
 import { getBillStatusTag } from '@/helpers/invoice'
+import OpnPaymentButton from '@/components/OpnPaymentButton.vue'
 
 const router = useRouter()
 const route = useRoute()
 const billId = route.params.id
-const showPayDialog = ref(route.query.action === 'pay')
 
 interface BillDetail {
   id: number
@@ -33,7 +32,6 @@ const loading = ref(false)
 const billDetail = ref<BillDetail | null>(null)
 
 // 支付相关
-const payMethod = ref('wechat')
 const payLoading = ref(false)
 
 // 获取账单详情
@@ -58,40 +56,9 @@ const handleBack = () => {
   router.back()
 }
 
-// 处理支付
-const handlePay = () => {
-  showPayDialog.value = true
-}
-
-// 确认支付
-const confirmPay = async () => {
-  try {
-    await ElMessageBox.confirm(
-      `确认使用${payMethod.value === 'wechat' ? '微信支付' : '支付宝'}支付 ¥${billDetail.value?.amount}？`,
-      '确认支付',
-      {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
-
-    payLoading.value = true
-    try {
-      // 这里应该调用支付 API
-      await new Promise(resolve => setTimeout(resolve, 1500)) // 模拟支付过程
-      ElMessage.success('支付成功')
-      showPayDialog.value = false
-      // 刷新账单详情
-      await fetchBillDetail()
-    } catch (error) {
-      ElMessage.error('支付失败，请重试')
-    } finally {
-      payLoading.value = false
-    }
-  } catch {
-    // 用户取消操作
-  }
+// 处理支付成功
+const handlePaySuccess = async () => {
+  await fetchBillDetail() // 刷新账单详情
 }
 
 onMounted(() => {
@@ -111,13 +78,14 @@ onMounted(() => {
         <h2>账单详情</h2>
       </div>
       <div class="header-actions">
-        <el-button
+        <OpnPaymentButton
           v-if="billDetail?.status === 'pending'"
-          type="primary"
-          @click="handlePay"
-        >
-          立即支付
-        </el-button>
+          :loading="payLoading"
+          @update:loading="(value) => payLoading = value"
+          :amount="billDetail.amount"
+          :description="`支付账单 ${billDetail.no} - ${billDetail.course.name}`"
+          @success="handlePaySuccess"
+        />
       </div>
     </div>
 
@@ -169,63 +137,6 @@ onMounted(() => {
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
-
-    <!-- 支付弹窗 -->
-    <el-dialog
-      v-model="showPayDialog"
-      title="选择支付方式"
-      width="400px"
-      :close-on-click-modal="false"
-    >
-      <div class="pay-info" v-if="billDetail">
-        <div class="info-row">
-          <label>账单编号</label>
-          <span>{{ billDetail.no || '-' }}</span>
-        </div>
-        <div class="info-row">
-          <label>课程</label>
-          <span>{{ billDetail.course.name }} ({{ billDetail.course.year_month }})</span>
-        </div>
-        <div class="info-row">
-          <label>金额</label>
-          <span class="price">¥{{ billDetail.amount }}</span>
-        </div>
-      </div>
-
-      <div class="pay-methods">
-        <el-radio-group v-model="payMethod">
-          <div class="method-item">
-            <el-radio label="wechat">
-              <div class="method-content">
-                <span class="icon">📱</span>
-                <span>微信支付</span>
-              </div>
-            </el-radio>
-          </div>
-          <div class="method-item">
-            <el-radio label="alipay">
-              <div class="method-content">
-                <span class="icon">💳</span>
-                <span>支付宝</span>
-              </div>
-            </el-radio>
-          </div>
-        </el-radio-group>
-      </div>
-
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="showPayDialog = false">取消</el-button>
-          <el-button
-            type="primary"
-            :loading="payLoading"
-            @click="confirmPay"
-          >
-            确认支付
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -270,52 +181,6 @@ onMounted(() => {
   .price {
     color: #f5222d;
     font-weight: 500;
-  }
-}
-
-// 支付弹窗样式
-.pay-info {
-  margin-bottom: 24px;
-  padding: 16px;
-  background: #f5f7fa;
-  border-radius: 4px;
-
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    label {
-      color: #909399;
-    }
-  }
-}
-
-.pay-methods {
-  .method-item {
-    margin-bottom: 16px;
-    padding: 16px;
-    border: 1px solid #dcdfe6;
-    border-radius: 4px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    .method-content {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: 8px;
-
-      .icon {
-        font-size: 24px;
-      }
-    }
   }
 }
 

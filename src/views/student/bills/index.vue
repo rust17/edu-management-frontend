@@ -6,11 +6,13 @@ import request from '@/http/request'
 import { invoiceEndpoints } from '@/http/endpoints/invoice'
 import { DEFAULT_PAGINATION, type PaginationType } from '@/http/pagination'
 import { getBillStatusTag } from '@/helpers/invoice'
+import OpnPaymentButton from '@/components/OpnPaymentButton.vue'
 
 const router = useRouter()
 
 interface Bill {
   id: number
+  no: string
   course_id: number
   student_id: number
   amount: string
@@ -108,9 +110,12 @@ const handleView = (id: number) => {
   router.push(`/student/bills/${id}`)
 }
 
-// 处理支付
-const handlePay = (bill: Bill) => {
-  router.push(`/student/bills/${bill.id}?action=pay`)
+// 支付相关
+const payLoadingMap = ref<Map<number, boolean>>(new Map())
+
+// 处理支付成功
+const handlePaySuccess = async () => {
+  await fetchBills() // 刷新账单列表
 }
 
 onMounted(() => {
@@ -220,13 +225,14 @@ onMounted(() => {
           >
             查看详情
           </el-button>
-          <el-button
+          <OpnPaymentButton
             v-if="bill.status === 'pending'"
-            type="primary"
-            @click="handlePay(bill)"
-          >
-            立即支付
-          </el-button>
+            :loading="payLoadingMap.get(bill.id) || false"
+            @update:loading="(value) => payLoadingMap.set(bill.id, value)"
+            :amount="bill.amount"
+            :description="`支付账单 ${bill.no} - ${bill.course.name}`"
+            @success="handlePaySuccess"
+          />
         </div>
       </el-card>
     </div>
