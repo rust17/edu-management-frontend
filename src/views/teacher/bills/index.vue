@@ -5,7 +5,7 @@ import request from '@/http/request'
 import { invoiceEndpoints } from '@/http/endpoints/invoice'
 import { DEFAULT_PAGINATION, type PaginationType } from '@/http/pagination'
 import { ElMessage } from 'element-plus'
-import { exportToCsv } from '@/utils/export'
+import { exportToCsv } from '@/helpers/export'
 
 interface Bill {
   id: number

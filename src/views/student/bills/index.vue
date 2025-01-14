@@ -5,6 +5,7 @@ import { Search } from '@element-plus/icons-vue'
 import request from '@/http/request'
 import { invoiceEndpoints } from '@/http/endpoints/invoice'
 import { DEFAULT_PAGINATION, type PaginationType } from '@/http/pagination'
+import { getBillStatusTag } from '@/helpers/invoice'
 
 const router = useRouter()
 
@@ -47,25 +48,6 @@ const statusOptions = [
   { value: 'paid', label: '已支付' },
   { value: 'failed', label: '支付失败' }
 ]
-
-// 获取账单状态显示
-const getBillStatusTag = (status: Bill['status']) => {
-  const statusMap = {
-    pending: {
-      type: 'warning',
-      label: '待支付'
-    },
-    paid: {
-      type: 'success',
-      label: '已支付'
-    },
-    failed: {
-      type: 'danger',
-      label: '支付失败'
-    }
-  }
-  return statusMap[status]
-}
 
 // 获取账单列表
 const fetchBills = async () => {
