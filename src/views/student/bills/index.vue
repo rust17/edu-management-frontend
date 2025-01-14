@@ -229,6 +229,7 @@ onMounted(() => {
             v-if="bill.status === 'pending'"
             :loading="payLoadingMap.get(bill.id) || false"
             @update:loading="(value) => payLoadingMap.set(bill.id, value)"
+            :invoiceId="bill.id"
             :amount="bill.amount"
             :description="`支付账单 ${bill.no} - ${bill.course.name}`"
             @success="handlePaySuccess"

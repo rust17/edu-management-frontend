@@ -22,6 +22,8 @@ interface Course {
   }
   invoice_status: 'pending' | 'paid' | 'failed'
   invoice_send_at: string
+  invoice_id: number
+  invoice_no: string
   paid_at: string
 }
 
@@ -183,8 +185,9 @@ onMounted(() => {
             v-if="course.invoice_status === 'pending'"
             :loading="payLoadingMap.get(course.id) || false"
             @update:loading="(value) => payLoadingMap.set(course.id, value)"
+            :invoiceId="course.invoice_id"
             :amount="course.fee"
-            :description="`支付课程 ${course.name} (${course.year_month})`"
+            :description="`支付账单 ${course.invoice_no} - ${course.name}`"
             @success="handlePaySuccess"
           />
         </div>

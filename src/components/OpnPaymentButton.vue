@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ElButton, ElMessage } from 'element-plus'
 import { paymentService } from '@/helpers/payment'
+import request from '@/http/request'
+import { paymentEndpoints } from '@/http/endpoints/payment'
 
 interface Props {
+  invoiceId: number
   amount: string
   description: string
   loading?: boolean
@@ -30,15 +33,12 @@ const handlePay = async () => {
       currency: 'JPY',
       description: props.description
     })
-    console.log(token)
+
     // 调用后端API处理支付
-    // await request({
-    //   url: invoiceEndpoints.pay(course.id),
-    //   method: 'post',
-    //   data: {
-    //     token
-    //   }
-    // })
+    await request.post(paymentEndpoints.omiseCard, {
+      invoice_id: props.invoiceId,
+      token
+    })
 
     ElMessage.success('支付成功')
     props.onSuccess()

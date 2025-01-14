@@ -24,6 +24,8 @@ interface CourseDetail {
   }
   invoice_status: 'pending' | 'paid' | 'failed'
   invoice_send_at: string
+  invoice_id: number
+  invoice_no: string
   paid_at: string
 }
 
@@ -82,7 +84,8 @@ onMounted(() => {
           v-if="courseDetail?.invoice_status === 'pending'"
           v-model:loading="payLoading"
           :amount="courseDetail.fee"
-          :description="`支付课程 ${courseDetail.name} (${courseDetail.year_month})`"
+          :invoiceId="courseDetail.invoice_id"
+          :description="`支付账单 ${courseDetail.invoice_no} - ${courseDetail.name}`"
           @success="handlePaySuccess"
         />
       </div>
