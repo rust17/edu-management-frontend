@@ -4,7 +4,7 @@ import { Search } from '@element-plus/icons-vue'
 import request from '@/http/request'
 import { invoiceEndpoints } from '@/http/endpoints/invoice'
 import { DEFAULT_PAGINATION, type PaginationType } from '@/http/pagination'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { exportToCsv } from '@/helpers/export'
 
 interface Bill {
@@ -63,7 +63,7 @@ const fetchBills = async () => {
   loading.value = true
   try {
     const response = await request({
-      url: invoiceEndpoints.teacher,
+      url: invoiceEndpoints.teacherList,
       method: 'get',
       params: {
         page: pagination.value.currentPage,
@@ -137,7 +137,7 @@ const handleExport = async () => {
   try {
     // 获取所有账单数据
     const response = await request({
-      url: invoiceEndpoints.teacher,
+      url: invoiceEndpoints.teacherList,
       method: 'get',
       params: {
         page: 1,
@@ -174,6 +174,32 @@ const handleExport = async () => {
     ElMessage.error('导出失败')
   } finally {
     loading.value = false
+  }
+}
+
+// 添加发送账单函数
+const handleSendBill = async (bill: Bill) => {
+  try {
+    await ElMessageBox.confirm(
+      `确认发送账单给 ${bill.student_name}？`,
+      '发送账单',
+      {
+        confirmButtonText: '确认发送',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }
+    )
+
+    await request.post(invoiceEndpoints.send(bill.course_id), {
+      student_ids: [bill.student_id]
+    })
+    ElMessage.success('账单发送成功')
+    // 刷新列表
+    await fetchBills()
+  } catch (error: any) {
+    if (error !== 'cancel') { // 用户取消操作不显示错误提示
+      ElMessage.error(error.response?.data?.message || '账单发送失败')
+    }
   }
 }
 
@@ -277,6 +303,18 @@ onMounted(() => {
         <el-table-column prop="paid_at" label="支付时间" width="160">
           <template #default="{ row }">
             {{ row.paid_at || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="120" fixed="right">
+          <template #default="{ row }">
+            <el-button
+              link
+              type="primary"
+              :disabled="row.status === 'paid'"
+              @click="handleSendBill(row)"
+            >
+              发送账单
+            </el-button>
           </template>
         </el-table-column>
       </el-table>

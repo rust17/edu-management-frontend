@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Search } from '@element-plus/icons-vue'
 import request from '@/http/request'
 import { courseEndpoints } from '@/http/endpoints/course'
@@ -67,26 +66,6 @@ const handleCreate = () => {
 // 处理查看详情
 const handleView = (id: number) => {
   router.push(`/teacher/courses/${id}`)
-}
-
-// 处理发送账单
-const handleSendBill = async (course: Course) => {
-  try {
-    await ElMessageBox.confirm(
-      `确认向所有学生发送 ${course.name} (${course.year_month}) 的账单吗？`,
-      '发送账单',
-      {
-        confirmButtonText: '确认发送',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }
-    )
-
-    // 这里应该调用发送账单的 API
-    ElMessage.success('账单发送成功')
-  } catch {
-    // 用户取消操作
-  }
 }
 
 // 重置搜索条件
@@ -175,13 +154,6 @@ onMounted(() => {
               @click="handleView(row.id)"
             >
               查看
-            </el-button>
-            <el-button
-              link
-              type="primary"
-              @click="handleSendBill(row)"
-            >
-              发送账单
             </el-button>
           </template>
         </el-table-column>

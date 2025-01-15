@@ -5,6 +5,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import request from '@/http/request'
 import { courseEndpoints } from '@/http/endpoints/course'
+import { invoiceEndpoints } from '@/http/endpoints/invoice'
 
 const router = useRouter()
 const route = useRoute()
@@ -55,25 +56,34 @@ const handleBack = () => {
   router.back()
 }
 
-// 处理发送账单
-const handleSendBill = async (studentId?: number) => {
-  const isSingle = !!studentId
-  const student = courseDetail.value?.students.find(s => s.id === studentId)
+// 批量创建账单
+const handleCreateBill = async (studentIds?: number[]) => {
+  const isSingle = studentIds?.length === 1
+  const students = courseDetail.value?.students.filter(s => studentIds?.includes(s.id))
   const confirmMessage = isSingle
-    ? `确认向 ${student?.name} 发送账单？`
-    : '确认向所有未支付的学生发送账单？'
+    ? `确认向 ${students?.[0]?.name} 创建账单？`
+    : '确认向所有学生创建账单？'
 
   try {
-    await ElMessageBox.confirm(confirmMessage, '发送账单', {
-      confirmButtonText: '确认发送',
+    await ElMessageBox.confirm(confirmMessage, '创建账单', {
+      confirmButtonText: '确认创建',
       cancelButtonText: '取消',
       type: 'warning'
     })
 
-    // 这里应该调用发送账单的 API
-    ElMessage.success('账单发送成功')
-  } catch {
-    // 用户取消操作
+    // 调用创建账单的 API
+    await request.post(invoiceEndpoints.create, {
+      course_id: Number(courseId),
+      student_ids: studentIds
+    })
+
+    ElMessage.success('账单创建成功')
+    // 重新获取课程详情，刷新账单状态
+    await fetchCourseDetail()
+  } catch (error: any) {
+    if (error !== 'cancel') { // 用户取消操作不显示错误提示
+      ElMessage.error(error.response?.data?.message || '账单发送失败')
+    }
   }
 }
 
@@ -120,9 +130,9 @@ onMounted(() => {
         <el-button @click="handleEdit">编辑课程</el-button>
         <el-button
           type="primary"
-          @click="handleSendBill()"
+          @click="handleCreateBill(courseDetail?.students.map(s => s.id))"
         >
-          发送账单
+          批量创建账单
         </el-button>
       </div>
     </div>
@@ -175,9 +185,9 @@ onMounted(() => {
               link
               type="primary"
               :disabled="row.invoice_status === 'paid'"
-              @click="handleSendBill(row.id)"
+              @click="handleCreateBill([row.id])"
             >
-              {{ row.invoice_status ? '重新发送' : '发送账单' }}
+              创建账单
             </el-button>
           </template>
         </el-table-column>

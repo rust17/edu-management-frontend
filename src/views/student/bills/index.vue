@@ -56,7 +56,7 @@ const fetchBills = async () => {
   loading.value = true
   try {
     const response = await request({
-      url: invoiceEndpoints.student,
+      url: invoiceEndpoints.studentList,
       method: 'get',
       params: {
         page: pagination.value.currentPage,
