@@ -59,10 +59,10 @@ request.interceptors.response.use(
           }
           break
         case 403:
-          ElMessage.error('没有权限进行此操作')
+          ElMessage.error(data.message ? data.message : '没有权限进行此操作')
           break
         case 404:
-          ElMessage.error('请求的资源不存在')
+          ElMessage.error(data.message ? data.message : '请求的资源不存在')
           break
         case 422:
           // 表单验证错误，显示具体的错误信息
@@ -71,7 +71,7 @@ request.interceptors.response.use(
           }
           break
         case 500:
-          ElMessage.error('服务器错误，请稍后重试')
+          ElMessage.error(data.message ? data.message : '服务器错误，请稍后重试')
           break
         default:
           ElMessage.error('网络错误，请稍后重试')

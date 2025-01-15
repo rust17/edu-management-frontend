@@ -30,7 +30,7 @@ const handlePay = async () => {
     // 创建支付会话
     const token = await paymentService.createPayment({
       amount: parseFloat(props.amount) * 100, // 转换为最小货币单位
-      currency: 'JPY',
+      currency: 'JPY', // 统一使用 JPY 作为结算货币
       description: props.description
     })
 
