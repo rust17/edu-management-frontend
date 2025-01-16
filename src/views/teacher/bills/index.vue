@@ -23,16 +23,6 @@ interface Bill {
   student_name: string
 }
 
-interface ExportBill {
-  '课程名称': string
-  '课程年月': string
-  '学生姓名': string
-  '费用(元)': string
-  '账单状态': string
-  '发送时间': string
-  '支付时间': string
-}
-
 // 账单列表数据
 const billList = ref<Bill[]>([])
 
@@ -141,7 +131,7 @@ const handleExport = async () => {
       method: 'get',
       params: {
         page: 1,
-        per_page: 100,
+        per_page: 1000,
         keyword: searchForm.value.keyword,
         year_month: searchForm.value.year_month,
         status: searchForm.value.status,
@@ -213,7 +203,13 @@ onMounted(() => {
     <!-- 页面标题 -->
     <div class="page-header">
       <h2>账单管理</h2>
-      <el-button type="primary" @click="handleExport">导出账单</el-button>
+      <el-tooltip
+        content="导出您的所有账单"
+        placement="bottom"
+        effect="light"
+      >
+        <el-button type="primary" @click="handleExport">导出账单</el-button>
+      </el-tooltip>
     </div>
 
     <!-- 搜索表单 -->
@@ -310,7 +306,7 @@ onMounted(() => {
             <el-button
               link
               type="primary"
-              :disabled="row.status === 'paid'"
+              :disabled="row.send_at !== null"
               @click="handleSendBill(row)"
             >
               发送账单

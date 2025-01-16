@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { ArrowLeft } from '@element-plus/icons-vue'
 import request from '@/http/request'
 import { courseEndpoints } from '@/http/endpoints/course'
@@ -47,7 +46,6 @@ const fetchCourseDetail = async () => {
     courseDetail.value = response.data.data
   } catch (error) {
     console.error('获取课程信息失败:', error)
-    ElMessage.error('获取课程信息失败')
   } finally {
     loading.value = false
   }
@@ -81,7 +79,7 @@ onMounted(() => {
       </div>
       <div class="header-actions">
         <OpnPaymentButton
-          v-if="courseDetail?.invoice_status === 'pending'"
+          v-if="courseDetail?.invoice_send_at && (courseDetail?.invoice_status === 'pending' || courseDetail?.invoice_status === 'failed')"
           v-model:loading="payLoading"
           :amount="courseDetail.fee"
           :invoiceId="courseDetail.invoice_id"
@@ -97,6 +95,7 @@ onMounted(() => {
         <div class="card-header">
           <h3>基本信息</h3>
           <el-tag
+            v-if="courseDetail.invoice_send_at"
             :type="getBillStatusTag(courseDetail.invoice_status).type"
             size="small"
           >

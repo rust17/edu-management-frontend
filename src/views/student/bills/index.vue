@@ -184,58 +184,71 @@ onMounted(() => {
 
     <!-- 账单列表 -->
     <div class="bill-grid" v-loading="loading">
-      <el-card
-        v-for="bill in billList"
-        :key="bill.id"
-        class="bill-card"
-        :body-style="{ padding: '0' }"
+      <template v-if="billList.length > 0">
+        <el-card
+          v-for="bill in billList"
+          :key="bill.id"
+          class="bill-card"
+          :body-style="{ padding: '0' }"
+        >
+          <div class="card-header">
+            <h3>{{ bill.course.name }}</h3>
+            <el-tag
+              :type="getBillStatusTag(bill.status).type"
+              size="small"
+            >
+              {{ getBillStatusTag(bill.status).label }}
+            </el-tag>
+          </div>
+          <div class="card-content">
+            <div class="info-item">
+              <label>课程年月</label>
+              <span>{{ bill.course.year_month }}</span>
+            </div>
+            <div class="info-item">
+              <label>账单金额</label>
+              <span class="price">¥{{ bill.amount }}</span>
+            </div>
+            <div class="info-item">
+              <label>发送时间</label>
+              <span>{{ bill.send_at }}</span>
+            </div>
+            <div class="info-item">
+              <label>支付时间</label>
+              <span>{{ bill.paid_at || '-' }}</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <el-button
+              link
+              type="primary"
+              @click="handleView(bill.id)"
+            >
+              查看详情
+            </el-button>
+            <OpnPaymentButton
+              v-if="bill.status === 'pending'"
+              :loading="payLoadingMap.get(bill.id) || false"
+              @update:loading="(value) => payLoadingMap.set(bill.id, value)"
+              :invoiceId="bill.id"
+              :amount="bill.amount"
+              :description="`支付账单 ${bill.no} - ${bill.course.name}`"
+              @success="handlePaySuccess"
+            />
+          </div>
+        </el-card>
+      </template>
+      <el-empty
+        v-else
+        description="暂无账单数据"
+        :image-size="200"
       >
-        <div class="card-header">
-          <h3>{{ bill.course.name }}</h3>
-          <el-tag
-            :type="getBillStatusTag(bill.status).type"
-            size="small"
-          >
-            {{ getBillStatusTag(bill.status).label }}
-          </el-tag>
-        </div>
-        <div class="card-content">
-          <div class="info-item">
-            <label>课程年月</label>
-            <span>{{ bill.course.year_month }}</span>
-          </div>
-          <div class="info-item">
-            <label>账单金额</label>
-            <span class="price">¥{{ bill.amount }}</span>
-          </div>
-          <div class="info-item">
-            <label>发送时间</label>
-            <span>{{ bill.send_at }}</span>
-          </div>
-          <div class="info-item">
-            <label>支付时间</label>
-            <span>{{ bill.paid_at || '-' }}</span>
-          </div>
-        </div>
-        <div class="card-footer">
-          <el-button
-            link
-            type="primary"
-            @click="handleView(bill.id)"
-          >
-            查看详情
-          </el-button>
-          <OpnPaymentButton
-            v-if="bill.status === 'pending'"
-            :loading="payLoadingMap.get(bill.id) || false"
-            @update:loading="(value) => payLoadingMap.set(bill.id, value)"
-            :invoiceId="bill.id"
-            :amount="bill.amount"
-            :description="`支付账单 ${bill.no} - ${bill.course.name}`"
-            @success="handlePaySuccess"
-          />
-        </div>
-      </el-card>
+        <template #image>
+          <el-icon :size="60" style="color: #909399">
+            <el-icon-document />
+          </el-icon>
+        </template>
+      </el-empty>
     </div>
 
     <!-- 分页 -->
@@ -273,6 +286,16 @@ onMounted(() => {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px;
     margin-bottom: 24px;
+    min-height: 300px;
+
+    .el-empty {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 0;
+    }
   }
 
   .bill-card {

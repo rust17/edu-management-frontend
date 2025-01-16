@@ -128,12 +128,18 @@ onMounted(() => {
       </div>
       <div class="header-actions">
         <el-button @click="handleEdit">编辑课程</el-button>
-        <el-button
-          type="primary"
-          @click="handleCreateBill(courseDetail?.students.map(s => s.id))"
+        <el-tooltip
+          content="为所有未创建账单的学生创建账单"
+          placement="bottom"
+          effect="light"
         >
-          批量创建账单
-        </el-button>
+          <el-button
+            type="primary"
+            @click="handleCreateBill(courseDetail?.students.map(s => s.id))"
+          >
+            批量创建账单
+          </el-button>
+        </el-tooltip>
       </div>
     </div>
 
@@ -184,7 +190,7 @@ onMounted(() => {
             <el-button
               link
               type="primary"
-              :disabled="row.invoice_status === 'paid'"
+              :disabled="row.invoice_status !== null"
               @click="handleCreateBill([row.id])"
             >
               创建账单

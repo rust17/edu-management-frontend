@@ -153,6 +153,7 @@ onMounted(() => {
         <div class="card-header">
           <h3>{{ course.name }}</h3>
           <el-tag
+            v-if="course.invoice_send_at"
             :type="getBillStatusTag(course.invoice_status).type"
             size="small"
           >
@@ -182,7 +183,7 @@ onMounted(() => {
             查看详情
           </el-button>
           <OpnPaymentButton
-            v-if="course.invoice_status === 'pending'"
+            v-if="course.invoice_send_at && (course.invoice_status === 'pending' || course.invoice_status === 'failed')"
             :loading="payLoadingMap.get(course.id) || false"
             @update:loading="(value) => payLoadingMap.set(course.id, value)"
             :invoiceId="course.invoice_id"
