@@ -79,7 +79,7 @@ onMounted(() => {
       </div>
       <div class="header-actions">
         <OpnPaymentButton
-          v-if="billDetail?.status === 'pending'"
+          v-if="billDetail?.status === 'pending' || billDetail?.status === 'failed'"
           :loading="payLoading"
           @update:loading="(value) => payLoading = value"
           :invoiceId="billDetail.id"

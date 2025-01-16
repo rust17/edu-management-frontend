@@ -3,6 +3,7 @@ import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import request from '@/http/request'
+import { statisEndpoints } from '@/http/endpoints/statistics'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -25,7 +26,7 @@ const statsData = ref({
 const fetchStats = async () => {
   try {
     const response = await request({
-      url: userRole.value === 'teacher' ? '/teacher-statistics' : '/student-statistics',
+      url: statisEndpoints[userRole.value as keyof typeof statisEndpoints],
       method: 'get'
     })
 

@@ -227,7 +227,7 @@ onMounted(() => {
               查看详情
             </el-button>
             <OpnPaymentButton
-              v-if="bill.status === 'pending'"
+              v-if="bill.status === 'pending' || bill.status === 'failed'"
               :loading="payLoadingMap.get(bill.id) || false"
               @update:loading="(value) => payLoadingMap.set(bill.id, value)"
               :invoiceId="bill.id"
