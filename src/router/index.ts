@@ -22,7 +22,7 @@ const routes: RouteRecordRaw[] = [
       }
     },
     children: [
-      // 教师路由
+      // Teacher routes
       {
         path: '/teacher',
         name: 'TeacherDashboard',
@@ -48,7 +48,7 @@ const routes: RouteRecordRaw[] = [
         name: 'TeacherBills',
         component: () => import('@/views/teacher/bills/index.vue')
       },
-      // 学生路由
+      // Student routes
       {
         path: '/student',
         name: 'StudentDashboard',
@@ -76,7 +76,7 @@ const routes: RouteRecordRaw[] = [
       }
     ]
   },
-  // 错误页面
+  // Error pages
   {
     path: '/403',
     name: '403',
@@ -94,7 +94,7 @@ const router = createRouter({
   routes
 })
 
-// 设置路由守卫
+// Setup router guards
 setupRouterGuards(router)
 
 export default router

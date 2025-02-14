@@ -11,7 +11,7 @@ interface PaymentConfig {
   description?: string
 }
 
-// 全局单例加载器
+// Global singleton loader
 const globalOmiseScriptLoader = new Promise<void>((resolve, reject) => {
   if (typeof OmiseCard !== 'undefined') {
     OmiseCard.configure({ publicKey: import.meta.env.VITE_OMISE_PUBLIC_KEY })

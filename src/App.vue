@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// App.vue 作为根组件，不需要太多逻辑
+// App.vue as the root component doesn't need much logic
 </script>
 
 <template>

@@ -3,16 +3,16 @@ import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
 
 export function setupRouterGuards(router: Router) {
-  // 白名单路由
+  // Whitelist routes
   const whiteList = ['/login']
 
-  // 角色路由映射
+  // Role route mapping
   const roleRouteMap = {
     teacher: ['/teacher'],
     student: ['/student']
   }
 
-  // 检查路由权限
+  // Check route permission
   const checkRoutePermission = (path: string, role?: 'teacher' | 'student') => {
     if (!role) return false
     return roleRouteMap[role].some(prefix => path.startsWith(prefix))
@@ -23,10 +23,10 @@ export function setupRouterGuards(router: Router) {
     const token = userStore.token
     const userInfo = userStore.userInfo
 
-    // 白名单路由直接放行
+    // Whitelist routes are allowed directly
     if (whiteList.includes(to.path)) {
       if (token) {
-        // 已登录用户访问登录页，重定向到首页
+        // Redirect logged-in users to home page when accessing login page
         next('/')
       } else {
         next()
@@ -34,44 +34,44 @@ export function setupRouterGuards(router: Router) {
       return
     }
 
-    // 未登录用户重定向到登录页
+    // Redirect unauthenticated users to login page
     if (!token) {
-      ElMessage.warning('请先登录')
+      ElMessage.warning('Please login first')
       next(`/login?redirect=${to.path}`)
       return
     }
 
-    // 已登录但没有用户信息，尝试获取用户信息
+    // If logged in but no user info, try to get user info
     if (!userInfo) {
       try {
-        // 这里应该调用获取用户信息的 API
+        // Here should call the API to get user info
         // await userStore.getUserInfo()
-        // 如果获取失败，清除 token 并重定向到登录页
+        // If failed, clear token and redirect to login page
         next('/login')
         return
       } catch (error) {
         userStore.logout()
-        ElMessage.error('获取用户信息失败，请重新登录')
+        ElMessage.error('Failed to get user info, please login again')
         next('/login')
         return
       }
     }
 
-    // 检查路由权限
+    // Check route permission
     if (to.path === '/') {
-      // 首页根据角色重定向
+      // Redirect to home page based on role
       next(`/${userInfo.role}`)
     } else if (checkRoutePermission(to.path, userInfo.role)) {
       next()
     } else {
-      ElMessage.error('无权访问该页面')
+      ElMessage.error('No permission to access this page')
       next('/403')
     }
   })
 
-  // 错误处理
+  // Error handling
   router.onError((error) => {
-    console.error('路由错误:', error)
-    ElMessage.error('页面加载失败')
+    console.error('Route error:', error)
+    ElMessage.error('Page load failed')
   })
 }

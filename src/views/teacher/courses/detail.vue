@@ -29,7 +29,7 @@ interface CourseDetail {
 const loading = ref(false)
 const courseDetail = ref<CourseDetail | null>(null)
 
-// 获取课程详情
+// Get course details
 const fetchCourseDetail = async () => {
   loading.value = true
   try {
@@ -40,71 +40,71 @@ const fetchCourseDetail = async () => {
 
     courseDetail.value = response.data.data
   } catch (error) {
-    console.error('获取课程信息失败:', error)
+    console.error('Failed to get course information:', error)
   } finally {
     loading.value = false
   }
 }
 
-// 处理编辑课程
+// Handle edit course
 const handleEdit = () => {
   router.push(`/teacher/courses/create?id=${courseId}`)
 }
 
-// 处理返回
+// Handle back
 const handleBack = () => {
   router.back()
 }
 
-// 批量创建账单
+// Batch create invoices
 const handleCreateBill = async (studentIds?: number[]) => {
   const isSingle = studentIds?.length === 1
   const students = courseDetail.value?.students.filter(s => studentIds?.includes(s.id))
   const confirmMessage = isSingle
-    ? `确认向 ${students?.[0]?.name} 创建账单？`
-    : '确认向所有学生创建账单？'
+    ? `Confirm to create an invoice for ${students?.[0]?.name}?`
+    : 'Confirm to create invoices for all students?'
 
   try {
-    await ElMessageBox.confirm(confirmMessage, '创建账单', {
-      confirmButtonText: '确认创建',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm(confirmMessage, 'Create Invoice', {
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
       type: 'warning'
     })
 
-    // 调用创建账单的 API
+    // Call the API to create invoices
     await request.post(invoiceEndpoints.create, {
       course_id: Number(courseId),
       student_ids: studentIds
     })
 
-    ElMessage.success('账单创建成功')
-    // 重新获取课程详情，刷新账单状态
+    ElMessage.success('Invoice created successfully')
+    // Re-fetch course details to refresh invoice status
     await fetchCourseDetail()
   } catch (error: any) {
-    if (error !== 'cancel') { // 用户取消操作不显示错误提示
-      ElMessage.error(error.response?.data?.message || '账单发送失败')
+    if (error !== 'cancel') { // Do not show error message if the user cancels the operation
+      ElMessage.error(error.response?.data?.message || 'Failed to send invoice')
     }
   }
 }
 
-// 获取账单状态显示
+// Get invoice status display
 const getBillStatusTag = (status: Student['invoice_status']) => {
   const statusMap = {
     pending: {
       type: 'warning',
-      label: '待支付'
+      label: 'Pending'
     },
     paid: {
       type: 'success',
-      label: '已支付'
+      label: 'Paid'
     },
     failed: {
       type: 'danger',
-      label: '支付失败'
+      label: 'Failed'
     },
     null: {
       type: 'info',
-      label: '未发送'
+      label: 'Not Sent'
     }
   }
   return statusMap[status || 'null']
@@ -117,19 +117,19 @@ onMounted(() => {
 
 <template>
   <div class="course-detail" v-loading="loading">
-    <!-- 页面头部 -->
+    <!-- Page header -->
     <div class="page-header">
       <div class="header-left">
         <el-button link @click="handleBack">
           <el-icon><ArrowLeft /></el-icon>
-          返回
+          Back
         </el-button>
-        <h2>课程详情</h2>
+        <h2>Course Details</h2>
       </div>
       <div class="header-actions">
-        <el-button @click="handleEdit">编辑课程</el-button>
+        <el-button @click="handleEdit">Edit Course</el-button>
         <el-tooltip
-          content="为所有未创建账单的学生创建账单"
+          content="Create invoices for all students who have not been invoiced"
           placement="bottom"
           effect="light"
         >
@@ -137,45 +137,45 @@ onMounted(() => {
             type="primary"
             @click="handleCreateBill(courseDetail?.students.map(s => s.id))"
           >
-            批量创建账单
+            Batch Create Invoices
           </el-button>
         </el-tooltip>
       </div>
     </div>
 
-    <!-- 基本信息 -->
+    <!-- Basic information -->
     <el-card class="info-card" v-if="courseDetail">
       <template #header>
         <div class="card-header">
-          <h3>基本信息</h3>
+          <h3>Basic Information</h3>
         </div>
       </template>
       <el-descriptions :column="2">
-        <el-descriptions-item label="课程名称">
+        <el-descriptions-item label="Course Name">
           {{ courseDetail.name }}
         </el-descriptions-item>
-        <el-descriptions-item label="年月">
+        <el-descriptions-item label="Year/Month">
           {{ courseDetail.year_month }}
         </el-descriptions-item>
-        <el-descriptions-item label="课程费用">
+        <el-descriptions-item label="Course Fee">
           <span class="price">¥{{ courseDetail.fee }}</span>
         </el-descriptions-item>
-        <el-descriptions-item label="学生人数">
-          {{ courseDetail.students.length }}人
+        <el-descriptions-item label="Number of Students">
+          {{ courseDetail.students.length }}
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
 
-    <!-- 学生列表 -->
+    <!-- Student list -->
     <el-card class="student-card" v-if="courseDetail">
       <template #header>
         <div class="card-header">
-          <h3>学生名单</h3>
+          <h3>Student List</h3>
         </div>
       </template>
       <el-table :data="courseDetail.students" style="width: 100%">
-        <el-table-column prop="name" label="姓名" min-width="150" />
-        <el-table-column label="账单状态" width="120">
+        <el-table-column prop="name" label="Name" min-width="150" />
+        <el-table-column label="Invoice Status" width="120">
           <template #default="{ row }">
             <el-tag
               :type="getBillStatusTag(row.invoice_status).type"
@@ -185,7 +185,7 @@ onMounted(() => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="Actions" width="120" fixed="right">
           <template #default="{ row }">
             <el-button
               link
@@ -193,7 +193,7 @@ onMounted(() => {
               :disabled="row.invoice_status !== null"
               @click="handleCreateBill([row.id])"
             >
-              创建账单
+              Create Invoice
             </el-button>
           </template>
         </el-table-column>
@@ -247,7 +247,7 @@ onMounted(() => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .course-detail {
     .page-header {

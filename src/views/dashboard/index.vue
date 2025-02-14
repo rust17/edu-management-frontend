@@ -11,18 +11,18 @@ const userStore = useUserStore()
 const userRole = computed(() => userStore.userInfo?.role)
 const userName = computed(() => {
   let role = userStore.userInfo?.role || ''
-  let displayRole = { teacher: '老师', student: '同学' }[role] || ''
+  let displayRole = { teacher: 'Teacher', student: 'Student' }[role] || ''
   return userStore.userInfo?.name + ' ' + displayRole
 })
 
-// 统计数据
+// Statistics data
 const statsData = ref({
   course_count: 0,
   invoice_count: 0,
   pending_invoice_count: 0
 })
 
-// 获取统计数据
+// Fetch statistics
 const fetchStats = async () => {
   try {
     const response = await request({
@@ -33,26 +33,26 @@ const fetchStats = async () => {
     const { data } = response.data
     statsData.value = data
   } catch (error) {
-    console.error('获取统计数据失败:', error)
+    console.error('Failed to fetch statistics:', error)
   }
 }
 
-// 统计卡片数据
+// Statistics cards data
 const stats = computed(() => {
   if (userRole.value === 'teacher') {
     return {
       courses: {
-        title: '课程总数',
+        title: 'Total Courses',
         value: statsData.value.course_count,
-        unit: '个',
+        unit: '',
         icon: 'Document',
         color: '#1890ff',
         path: '/teacher/courses'
       },
       bills: {
-        title: '账单总数',
+        title: 'Total Invoices',
         value: statsData.value.invoice_count,
-        unit: '个',
+        unit: '',
         icon: 'Histogram',
         color: '#52c41a',
         path: '/teacher/bills'
@@ -61,17 +61,17 @@ const stats = computed(() => {
   } else {
     return {
       courses: {
-        title: '我的课程',
+        title: 'My Courses',
         value: statsData.value.course_count,
-        unit: '个',
+        unit: '',
         icon: 'Document',
         color: '#1890ff',
         path: '/student/courses'
       },
       bills: {
-        title: '待支付账单',
+        title: 'Pending Invoices',
         value: statsData.value.pending_invoice_count,
-        unit: '个',
+        unit: '',
         icon: 'Histogram',
         color: '#faad14',
         path: '/student/bills'
@@ -94,12 +94,12 @@ const handleCardClick = (path: string) => {
     <el-card class="welcome-card">
       <template #header>
         <div class="welcome-header">
-          <h2>欢迎回来，{{ userName }}</h2>
+          <h2>Welcome back, {{ userName }}</h2>
           <span class="time">{{ new Date().toLocaleDateString() }}</span>
         </div>
       </template>
       <div class="welcome-content">
-        <p>今天是美好的一天，让我们开始工作吧！</p>
+        <p>Today is a great day, let's get started!</p>
       </div>
     </el-card>
 
@@ -129,11 +129,11 @@ const handleCardClick = (path: string) => {
       </el-card>
     </div>
 
-    <!-- 最近动态 -->
+    <!-- Recent Activities -->
     <el-card class="recent-card">
       <template #header>
         <div class="card-header">
-          <h3>最近动态</h3>
+          <h3>Recent Activities</h3>
         </div>
       </template>
       <el-timeline>
@@ -142,20 +142,20 @@ const handleCardClick = (path: string) => {
           timestamp="2024-03-10"
           type="primary"
         >
-          <h4>新建课程</h4>
-          <p>创建了"高中数学"课程</p>
+          <h4>New Course</h4>
+          <p>Created "High School Math" course</p>
         </el-timeline-item>
         <el-timeline-item
           v-if="userRole === 'student'"
           timestamp="2024-03-09"
           type="success"
         >
-          <h4>账单支付</h4>
-          <p>完成了"初中物理"课程的账单支付</p>
+          <h4>Invoice Payment</h4>
+          <p>Completed payment for "Middle School Physics" course</p>
         </el-timeline-item>
         <el-timeline-item timestamp="2024-03-08">
-          <h4>系统通知</h4>
-          <p>欢迎使用教务管理系统</p>
+          <h4>System Notification</h4>
+          <p>Welcome to Education Management System</p>
         </el-timeline-item>
       </el-timeline>
     </el-card>
@@ -262,7 +262,7 @@ const handleCardClick = (path: string) => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .dashboard {
     .stats-container {

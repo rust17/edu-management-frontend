@@ -17,22 +17,22 @@ interface Course {
   students: number
 }
 
-// 课程列表数据
+// Course list data
 const courseList = ref<Course[]>([])
 
-// 搜索条件
+// Search criteria
 const searchForm = ref({
   keyword: '',
   year_month: ''
 })
 
-// 表格加载状态
+// Table loading status
 const loading = ref(false)
 
-// 分页
+// Pagination
 const pagination = ref<PaginationType>(DEFAULT_PAGINATION())
 
-// 获取课程列表
+// Get course list
 const fetchCourses = async () => {
   loading.value = true
   try {
@@ -52,23 +52,23 @@ const fetchCourses = async () => {
     pagination.value.total = data.total
     pagination.value.currentPage = data.current_page
   } catch (error) {
-    console.error('获取课程列表失败:', error)
+    console.error('Failed to get course list:', error)
   } finally {
     loading.value = false
   }
 }
 
-// 处理创建课程
+// Handle create course
 const handleCreate = () => {
   router.push('/teacher/courses/create')
 }
 
-// 处理查看详情
+// Handle view details
 const handleView = (id: number) => {
   router.push(`/teacher/courses/${id}`)
 }
 
-// 重置搜索条件
+// Reset search criteria
 const resetSearch = () => {
   searchForm.value = {
     keyword: '',
@@ -78,13 +78,13 @@ const resetSearch = () => {
   fetchCourses()
 }
 
-// 处理搜索
+// Handle search
 const handleSearch = () => {
   pagination.value.currentPage = 1
   fetchCourses()
 }
 
-// 处理分页变化
+// Handle pagination change
 const handlePageChange = (page: number) => {
   pagination.value.currentPage = page
   fetchCourses()
@@ -97,69 +97,69 @@ onMounted(() => {
 
 <template>
   <div class="course-list">
-    <!-- 页面标题和操作按钮 -->
+    <!-- Page title and action buttons -->
     <div class="page-header">
-      <h2>课程管理</h2>
+      <h2>Course Management</h2>
       <el-button type="primary" :icon="Plus" @click="handleCreate">
-        创建课程
+        Create Course
       </el-button>
     </div>
 
-    <!-- 搜索表单 -->
+    <!-- Search form -->
     <el-card class="search-card">
       <el-form :model="searchForm" inline>
-        <el-form-item label="关键词">
+        <el-form-item label="Keyword">
           <el-input
             v-model="searchForm.keyword"
-            placeholder="搜索课程名称"
+            placeholder="Search course name"
             :prefix-icon="Search"
           />
         </el-form-item>
-        <el-form-item label="年月">
+        <el-form-item label="Year/Month">
           <el-date-picker
             v-model="searchForm.year_month"
             type="month"
-            placeholder="选择年月"
+            placeholder="Select year and month"
             format="YYYY-MM"
             value-format="YYYY-MM"
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-          <el-button @click="resetSearch">重置</el-button>
+          <el-button type="primary" @click="handleSearch">Search</el-button>
+          <el-button @click="resetSearch">Reset</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
-    <!-- 课程列表 -->
+    <!-- Course list -->
     <el-card class="list-card">
       <el-table
         :data="courseList"
         v-loading="loading"
         style="width: 100%"
       >
-        <el-table-column prop="name" label="课程名称" min-width="150" />
-        <el-table-column prop="year_month" label="年月" width="120" />
-        <el-table-column label="费用" width="120">
+        <el-table-column prop="name" label="Course Name" min-width="150" />
+        <el-table-column prop="year_month" label="Year/Month" width="120" />
+        <el-table-column label="Fee" width="120">
           <template #default="{ row }">
             ¥{{ row.fee }}
           </template>
         </el-table-column>
-        <el-table-column prop="students" label="学生数" width="100" />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column prop="students" label="Students" width="100" />
+        <el-table-column label="Actions" width="200" fixed="right">
           <template #default="{ row }">
             <el-button
               link
               type="primary"
               @click="handleView(row.id)"
             >
-              查看
+              View
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
+      <!-- Pagination -->
       <div class="pagination">
         <el-pagination
           v-model:current-page="pagination.currentPage"
@@ -202,7 +202,7 @@ onMounted(() => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .course-list {
     .el-form {

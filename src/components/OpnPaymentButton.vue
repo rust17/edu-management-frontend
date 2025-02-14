@@ -27,25 +27,25 @@ const handlePay = async () => {
   emit('update:loading', true)
 
   try {
-    // 创建支付会话
+    // Create payment session
     const token = await paymentService.createPayment({
-      amount: parseFloat(props.amount) * 100, // 转换为最小货币单位
-      currency: 'JPY', // 统一使用 JPY 作为结算货币
+      amount: parseFloat(props.amount) * 100, // Convert to smallest currency unit
+      currency: 'JPY', // Use JPY as the settlement currency
       description: props.description
     })
 
-    // 调用后端API处理支付
+    // Call backend API to process payment
     await request.post(paymentEndpoints.omiseCard, {
       invoice_id: props.invoiceId,
       token
     })
 
-    ElMessage.success('支付成功')
+    ElMessage.success('Payment successful')
     props.onSuccess()
   } catch (error) {
-    // 只有在非用户取消的情况下显示错误信息
+    // Only show error message if it's not a user cancellation
     if (error instanceof Error && error.message === 'Payment cancelled') {
-      ElMessage.warning('您取消了支付')
+      ElMessage.warning('Payment cancelled by user')
       props.onCancel()
     }
   } finally {

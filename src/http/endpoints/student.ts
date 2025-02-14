@@ -1,3 +1,3 @@
 export const studentEndpoints = {
-  list: '/students' // 学生列表
+  list: '/students' // Student list
 } as const

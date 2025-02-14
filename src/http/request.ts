@@ -3,19 +3,19 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { LOGIN_FAILED, SUCCESS } from './codes'
 
-// 创建 axios 实例
+// Create axios instance
 const request = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000
 })
 
-// 请求拦截器
+// Request interceptor
 request.interceptors.request.use(
   (config) => {
     const userStore = useUserStore()
     const token = userStore.token
 
-    // 如果有 token 则带上
+    // Add token to header if exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -27,12 +27,12 @@ request.interceptors.request.use(
   }
 )
 
-// 响应拦截器
+// Response interceptor
 request.interceptors.response.use(
   (response) => {
     const { code, message } = response.data
 
-    // 如果业务状态码不为 0，统一处理错误
+    // Handle non-success business codes
     if (code !== SUCCESS && message) {
       ElMessage.error(message)
       return Promise.reject(new Error(message))
@@ -46,40 +46,40 @@ request.interceptors.response.use(
     if (error.response) {
       const { status, data } = error.response
 
-      // 处理常见的 HTTP 状态码
+      // Handle common HTTP status codes
       switch (status) {
         case 401:
-          // 分两种情况：1. 登录失败 2. token 过期或无效。根据 code 来判断
+          // Two cases: 1. Login failed 2. Token expired or invalid. Check by code
           if (data.code === LOGIN_FAILED && data.message) {
             ElMessage.error(data.message)
           } else {
-            // token 过期或无效，清除用户信息并跳转到登录页
+            // Token expired or invalid, clear user info and redirect to login
             userStore.logout()
             window.location.href = '/login'
           }
           break
         case 403:
-          ElMessage.error(data.message ? data.message : '没有权限进行此操作')
+          ElMessage.error(data.message ? data.message : 'No permission for this operation')
           break
         case 404:
-          ElMessage.error(data.message ? data.message : '请求的资源不存在')
+          ElMessage.error(data.message ? data.message : 'Requested resource not found')
           break
         case 422:
-          // 表单验证错误，显示具体的错误信息
+          // Form validation error, show specific error message
           if (data.message) {
             ElMessage.error(data.message)
           }
           break
         case 500:
-          ElMessage.error(data.message ? data.message : '服务器错误，请稍后重试')
+          ElMessage.error(data.message ? data.message : 'Server error, please try again later')
           break
         default:
-          ElMessage.error('网络错误，请稍后重试')
+          ElMessage.error('Network error, please try again later')
       }
     } else if (error.request) {
-      ElMessage.error('网络连接失败，请检查网络')
+      ElMessage.error('Network connection failed, please check your network')
     } else {
-      ElMessage.error('请求失败，请稍后重试')
+      ElMessage.error('Request failed, please try again later')
     }
 
     return Promise.reject(error)

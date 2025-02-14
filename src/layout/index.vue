@@ -18,17 +18,17 @@ const menuItems = computed(() => {
       {
         index: '/teacher',
         icon: 'House',
-        title: '首页'
+        title: 'Home'
       },
       {
         index: '/teacher/courses',
         icon: 'Reading',
-        title: '课程管理'
+        title: 'Course Management'
       },
       {
         index: '/teacher/bills',
         icon: 'Money',
-        title: '账单管理'
+        title: 'Invoice Management'
       }
     ]
   } else if (role === 'student') {
@@ -36,17 +36,17 @@ const menuItems = computed(() => {
       {
         index: '/student',
         icon: 'House',
-        title: '首页'
+        title: 'Home'
       },
       {
         index: '/student/courses',
         icon: 'Reading',
-        title: '我的课程'
+        title: 'My Courses'
       },
       {
         index: '/student/bills',
         icon: 'Money',
-        title: '我的账单'
+        title: 'My Invoices'
       }
     ]
   }
@@ -57,21 +57,21 @@ const handleLogout = async () => {
   try {
     await request.post(authEndpoints.logout)
     userStore.logout()
-    ElMessage.success('已成功登出')
+    ElMessage.success('Logged out successfully')
     router.push('/login')
   } catch (error) {
-    // 错误已经被拦截器处理，这里不需要额外处理
+    // Errors are already handled by the interceptor, no need for additional handling here
   }
 }
 </script>
 
 <template>
   <div class="layout">
-    <!-- 侧边栏 -->
+    <!-- Sidebar -->
     <el-aside :width="isCollapse ? '64px' : '200px'" class="aside">
       <div class="logo">
         <img src="@/assets/logo.svg" alt="logo">
-        <span v-show="!isCollapse">教务管理系统</span>
+        <span v-show="!isCollapse">Education Management System</span>
       </div>
       <el-menu
         :default-active="$route.path"
@@ -91,7 +91,7 @@ const handleLogout = async () => {
     </el-aside>
 
     <el-container class="container">
-      <!-- 顶部导航栏 -->
+      <!-- Top navigation bar -->
       <el-header class="header">
         <div class="header-left">
           <el-icon
@@ -112,14 +112,14 @@ const handleLogout = async () => {
             </span>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+                <el-dropdown-item command="logout">Logout</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </div>
       </el-header>
 
-      <!-- 主要内容区域 -->
+      <!-- Main content area -->
       <el-main class="main">
         <router-view />
       </el-main>

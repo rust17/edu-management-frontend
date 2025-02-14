@@ -1,12 +1,12 @@
 /*
-  这里存放后端的业务码
-  后端响应统一为这种格式，业务码为 0 表示成功，非 0 表示失败
+  Here are the backend business codes
+  The backend response is unified in this format, where 0 indicates success and non-zero indicates failure
   {
-    "code": 0, // 业务码
-    "message": "操作成功", // 提示信息
-    "data": null // 数据
+    "code": 0, // Business code
+    "message": "Operation successful", // Prompt message
+    "data": null // Data
   }
 */
-export const SUCCESS = 0 // 操作成功
-export const TOKEN_EXPIRED = 1 // token 过期或无效、一般错误
-export const LOGIN_FAILED = 2 // 登录失败
+export const SUCCESS = 0 // Operation successful
+export const TOKEN_EXPIRED = 1 // Token expired or invalid, general error
+export const LOGIN_FAILED = 2 // Login failed

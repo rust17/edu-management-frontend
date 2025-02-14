@@ -31,10 +31,10 @@ interface CourseDetail {
 const loading = ref(false)
 const courseDetail = ref<CourseDetail | null>(null)
 
-// 支付相关
+// Payment related
 const payLoading = ref(false)
 
-// 获取课程详情
+// Get course details
 const fetchCourseDetail = async () => {
   loading.value = true
   try {
@@ -45,20 +45,20 @@ const fetchCourseDetail = async () => {
 
     courseDetail.value = response.data.data
   } catch (error) {
-    console.error('获取课程信息失败:', error)
+    console.error('Failed to get course information:', error)
   } finally {
     loading.value = false
   }
 }
 
-// 处理返回
+// Handle back
 const handleBack = () => {
   router.back()
 }
 
-// 处理支付成功
+// Handle payment success
 const handlePaySuccess = async () => {
-  await fetchCourseDetail() // 刷新课程详情
+  await fetchCourseDetail() // Refresh course details
 }
 
 onMounted(() => {
@@ -68,14 +68,14 @@ onMounted(() => {
 
 <template>
   <div class="course-detail" v-loading="loading">
-    <!-- 页面头部 -->
+    <!-- Page header -->
     <div class="page-header">
       <div class="header-left">
         <el-button link @click="handleBack">
           <el-icon><ArrowLeft /></el-icon>
-          返回
+          Back
         </el-button>
-        <h2>课程详情</h2>
+        <h2>Course Details</h2>
       </div>
       <div class="header-actions">
         <OpnPaymentButton
@@ -83,17 +83,17 @@ onMounted(() => {
           v-model:loading="payLoading"
           :amount="courseDetail.fee"
           :invoiceId="courseDetail.invoice_id"
-          :description="`支付账单 ${courseDetail.invoice_no} - ${courseDetail.name}`"
+          :description="`Pay bill ${courseDetail.invoice_no} - ${courseDetail.name}`"
           @success="handlePaySuccess"
         />
       </div>
     </div>
 
-    <!-- 基本信息 -->
+    <!-- Basic information -->
     <el-card class="info-card" v-if="courseDetail">
       <template #header>
         <div class="card-header">
-          <h3>基本信息</h3>
+          <h3>Basic Information</h3>
           <el-tag
             v-if="courseDetail.invoice_send_at"
             :type="getBillStatusTag(courseDetail.invoice_status).type"
@@ -104,22 +104,22 @@ onMounted(() => {
         </div>
       </template>
       <el-descriptions :column="2">
-        <el-descriptions-item label="课程名称">
+        <el-descriptions-item label="Course Name">
           {{ courseDetail.name }}
         </el-descriptions-item>
-        <el-descriptions-item label="年月">
+        <el-descriptions-item label="Year/Month">
           {{ courseDetail.year_month }}
         </el-descriptions-item>
-        <el-descriptions-item label="任课教师">
+        <el-descriptions-item label="Teacher">
           {{ courseDetail.teacher.name }}
         </el-descriptions-item>
-        <el-descriptions-item label="课程费用">
+        <el-descriptions-item label="Course Fee">
           <span class="price">¥{{ courseDetail.fee }}</span>
         </el-descriptions-item>
-        <el-descriptions-item label="账单发送时间">
+        <el-descriptions-item label="Invoice Send Time">
           {{ courseDetail.invoice_send_at || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="支付时间">
+        <el-descriptions-item label="Payment Time">
           {{ courseDetail.paid_at || '-' }}
         </el-descriptions-item>
       </el-descriptions>
@@ -168,7 +168,7 @@ onMounted(() => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .course-detail {
     .page-header {

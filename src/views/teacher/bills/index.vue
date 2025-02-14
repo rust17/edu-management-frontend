@@ -285,7 +285,7 @@ onMounted(() => {
             ¥{{ row.amount }}
           </template>
         </el-table-column>
-        <el-table-column label="状态" width="100">
+        <el-table-column label="Status" width="100">
           <template #default="{ row }">
             <el-tag
               :type="getBillStatusTag(row.status).type"
@@ -295,13 +295,13 @@ onMounted(() => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="send_at" label="发送时间" width="160" />
-        <el-table-column prop="paid_at" label="支付时间" width="160">
+        <el-table-column prop="send_at" label="Sent At" width="160" />
+        <el-table-column prop="paid_at" label="Paid At" width="160">
           <template #default="{ row }">
             {{ row.paid_at || '-' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="Actions" width="120" fixed="right">
           <template #default="{ row }">
             <el-button
               link
@@ -309,13 +309,13 @@ onMounted(() => {
               :disabled="row.send_at !== null"
               @click="handleSendBill(row)"
             >
-              发送账单
+              Send Bill
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
+      <!-- Pagination -->
       <div class="pagination">
         <el-pagination
           v-model:current-page="pagination.currentPage"
@@ -358,7 +358,7 @@ onMounted(() => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .bill-list {
     .el-form {

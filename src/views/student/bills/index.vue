@@ -26,10 +26,10 @@ interface Bill {
   }
 }
 
-// 账单列表数据
+// Bill list data
 const billList = ref<Bill[]>([])
 
-// 搜索条件
+// Search criteria
 const searchForm = ref({
   keyword: '',
   year_month: '',
@@ -38,20 +38,20 @@ const searchForm = ref({
   send_end: ''
 })
 
-// 表格加载状态
+// Table loading status
 const loading = ref(false)
 
-// 分页
+// Pagination
 const pagination = ref<PaginationType>(DEFAULT_PAGINATION())
 
-// 账单状态选项
+// Bill status options
 const statusOptions = [
-  { value: 'pending', label: '待支付' },
-  { value: 'paid', label: '已支付' },
-  { value: 'failed', label: '支付失败' }
+  { value: 'pending', label: 'Pending' },
+  { value: 'paid', label: 'Paid' },
+  { value: 'failed', label: 'Failed' }
 ]
 
-// 获取账单列表
+// Get bill list
 const fetchBills = async () => {
   loading.value = true
   try {
@@ -74,13 +74,13 @@ const fetchBills = async () => {
     pagination.value.total = data.total
     pagination.value.currentPage = data.current_page
   } catch (error) {
-    console.error('获取账单列表失败:', error)
+    console.error('Failed to get bill list:', error)
   } finally {
     loading.value = false
   }
 }
 
-// 重置搜索条件
+// Reset search criteria
 const resetSearch = () => {
   searchForm.value = {
     keyword: '',
@@ -93,29 +93,29 @@ const resetSearch = () => {
   fetchBills()
 }
 
-// 处理搜索
+// Handle search
 const handleSearch = () => {
   pagination.value.currentPage = 1
   fetchBills()
 }
 
-// 处理分页变化
+// Handle pagination change
 const handlePageChange = (page: number) => {
   pagination.value.currentPage = page
   fetchBills()
 }
 
-// 处理查看详情
+// Handle view details
 const handleView = (id: number) => {
   router.push(`/student/bills/${id}`)
 }
 
-// 支付相关
+// Payment related
 const payLoadingMap = ref<Map<number, boolean>>(new Map())
 
-// 处理支付成功
+// Handle payment success
 const handlePaySuccess = async () => {
-  await fetchBills() // 刷新账单列表
+  await fetchBills() // Refresh bill list
 }
 
 onMounted(() => {
@@ -125,31 +125,31 @@ onMounted(() => {
 
 <template>
   <div class="bill-list">
-    <!-- 页面标题 -->
+    <!-- Page title -->
     <div class="page-header">
-      <h2>我的账单</h2>
+      <h2>My Bills</h2>
     </div>
 
-    <!-- 搜索表单 -->
+    <!-- Search form -->
     <el-card class="search-card">
       <el-form :model="searchForm" inline>
-        <el-form-item label="关键词">
+        <el-form-item label="Keyword">
           <el-input
             v-model="searchForm.keyword"
-            placeholder="搜索课程名称"
+            placeholder="Search course name"
             :prefix-icon="Search"
           />
         </el-form-item>
-        <el-form-item label="月份">
+        <el-form-item label="Month">
           <el-date-picker
             v-model="searchForm.year_month"
             type="month"
-            placeholder="选择月份"
+            placeholder="Select month"
             value-format="YYYY-MM"
           />
         </el-form-item>
-        <el-form-item label="账单状态">
-          <el-select v-model="searchForm.status" placeholder="选择状态" style="width: 100px" clearable>
+        <el-form-item label="Bill Status">
+          <el-select v-model="searchForm.status" placeholder="Select status" style="width: 100px" clearable>
             <el-option
               v-for="item in statusOptions"
               :key="item.value"
@@ -158,31 +158,31 @@ onMounted(() => {
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="发送时间">
+        <el-form-item label="Send Time">
           <el-date-picker
             v-model="searchForm.send_start"
             type="date"
-            placeholder="开始日期"
+            placeholder="Start date"
             value-format="YYYY-MM-DD"
             style="width: 150px"
           />
-          <span class="mx-2">至</span>
+          <span class="mx-2">to</span>
           <el-date-picker
             v-model="searchForm.send_end"
             type="date"
-            placeholder="结束日期"
+            placeholder="End date"
             value-format="YYYY-MM-DD"
             style="width: 150px"
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-          <el-button @click="resetSearch">重置</el-button>
+          <el-button type="primary" @click="handleSearch">Search</el-button>
+          <el-button @click="resetSearch">Reset</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
-    <!-- 账单列表 -->
+    <!-- Bill list -->
     <div class="bill-grid" v-loading="loading">
       <template v-if="billList.length > 0">
         <el-card
@@ -202,19 +202,19 @@ onMounted(() => {
           </div>
           <div class="card-content">
             <div class="info-item">
-              <label>课程年月</label>
+              <label>Course Year/Month</label>
               <span>{{ bill.course.year_month }}</span>
             </div>
             <div class="info-item">
-              <label>账单金额</label>
+              <label>Bill Amount</label>
               <span class="price">¥{{ bill.amount }}</span>
             </div>
             <div class="info-item">
-              <label>发送时间</label>
+              <label>Send Time</label>
               <span>{{ bill.send_at }}</span>
             </div>
             <div class="info-item">
-              <label>支付时间</label>
+              <label>Payment Time</label>
               <span>{{ bill.paid_at || '-' }}</span>
             </div>
           </div>
@@ -224,7 +224,7 @@ onMounted(() => {
               type="primary"
               @click="handleView(bill.id)"
             >
-              查看详情
+              View Details
             </el-button>
             <OpnPaymentButton
               v-if="bill.status === 'pending' || bill.status === 'failed'"
@@ -232,7 +232,7 @@ onMounted(() => {
               @update:loading="(value) => payLoadingMap.set(bill.id, value)"
               :invoiceId="bill.id"
               :amount="bill.amount"
-              :description="`支付账单 ${bill.no} - ${bill.course.name}`"
+              :description="`Pay bill ${bill.no} - ${bill.course.name}`"
               @success="handlePaySuccess"
             />
           </div>
@@ -240,7 +240,7 @@ onMounted(() => {
       </template>
       <el-empty
         v-else
-        description="暂无账单数据"
+        description="No bill data"
         :image-size="200"
       >
         <template #image>
@@ -251,7 +251,7 @@ onMounted(() => {
       </el-empty>
     </div>
 
-    <!-- 分页 -->
+    <!-- Pagination -->
     <div class="pagination">
       <el-pagination
         v-model:current-page="pagination.currentPage"
@@ -351,7 +351,7 @@ onMounted(() => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .bill-list {
     .el-form {

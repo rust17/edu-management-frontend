@@ -7,7 +7,7 @@ import router from './router'
 import './assets/main.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-// 预加载 Omise 脚本
+// Preload Omise script
 import './helpers/payment'
 
 const app = createApp(App)

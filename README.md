@@ -1,54 +1,55 @@
-# 教务管理系统前端
+# Education Management System Frontend
 
-这是一个基于 Vue 3 + TypeScript 开发的教务管理系统前端项目，主要用于管理教师和学生的课程及付款信息。
+This is a frontend project for an education management system, built with Vue 3 + TypeScript. It's primarily used for managing courses and payment information for teachers and students.
 
-## 技术栈
+## Tech Stack
 
-- **核心框架**: Vue 3 + TypeScript
-- **构建工具**: Vite
-- **UI 框架**: Element Plus
-- **状态管理**: Pinia
-- **HTTP 客户端**: Axios
-- **支付集成**: Opn Payments (原 Omise)
-- **代码规范**: ESLint + EditorConfig
-- **样式预处理**: SASS
+-   **Core Framework**: Vue 3 + TypeScript
+-   **Build Tool**: Vite
+-   **UI Framework**: Element Plus
+-   **State Management**: Pinia
+-   **HTTP Client**: Axios
+-   **Payment Integration**: Opn Payments (formerly Omise)
+-   **Code Style**: ESLint + EditorConfig
+-   **Style Preprocessor**: SASS
 
-## 主要功能
+## Key Features
 
-- 🔐 用户认证（教师/学生）
-- 📚 课程管理
-  - 教师：创建、编辑课程
-  - 学生：查看课程列表和详情
-- 💰 支付管理
-  - 集成 Opn Payments 支付系统
-  - 支持信用卡支付
-- 📊 数据统计
-  - 教师：课程数、账单总数
-  - 学生：课程数、待支付账单数
+-   🔐 User Authentication (Teacher/Student)
+-   📚 Course Management
+    -   Teacher: Create and edit courses
+    -   Student: View course list and details
+-   💰 Payment Management
+    -   Integrated with Opn Payments system
+    -   Supports credit card payments
+-   📊 Data Statistics
+    -   Teacher: Number of courses, total number of invoices
+    -   Student: Number of courses, number of pending invoices
 
-## 项目结构
+## Project Structure
+
 ```
 edu-management-frontend/
 ├── src/
-│ ├── assets/ # 静态资源
-│ ├── components/ # 公共组件
-│ ├── helpers/ # 工具函数
-│ ├── http/ # API 请求相关
-│ ├── router/ # 路由配置
-│ ├── stores/ # Pinia 状态管理
-│ └── views/ # 页面组件
+│   ├── assets/ # Static assets
+│   ├── components/ # Common components
+│   ├── helpers/ # Utility functions
+│   ├── http/ # API request related
+│   ├── router/ # Router configuration
+│   ├── stores/ # Pinia state management
+│   └── views/ # Page components
 ```
 
-## 开发指南
+## Development Guide
 
-### 环境要求
+### Environment Requirements
 
-- Node.js >= 18
-- npm >= 9
+-   Node.js >= 18
+-   npm >= 9
 
-### 本地开发
+### Local Development
 
-1. 克隆项目并安装依赖：
+1.  Clone the project and install dependencies:
 
 ```bash
 git clone <repository-url>
@@ -56,71 +57,71 @@ cd edu-management-frontend
 npm install
 ```
 
-2. 配置环境变量：
+2.  Configure environment variables:
 
 ```bash
 cp .env.example .env
 
-编辑 .env 文件，设置必要的环境变量：
-- VITE_API_BASE_URL: API 接口地址
-- VITE_OMISE_PUBLIC_KEY: Opn Payments 公钥
+Edit the .env file and set the necessary environment variables:
+- VITE_API_BASE_URL: API endpoint URL
+- VITE_OMISE_PUBLIC_KEY: Opn Payments public key
 ```
 
-3. 启动开发服务器：
+3.  Start the development server:
 
 ```bash
 npm run dev
 ```
 
-### 生产部署
+### Production Deployment
 
-1. 构建生产版本：
+1.  Build the production version:
 
 ```bash
 npm run build
 ```
 
-2. 部署 `dist` 目录下的文件到你的 Web 服务器
+2.  Deploy the files in the `dist` directory to your web server.
 
-## 注意事项
+## Notes
 
-### 开发注意事项
+### Development Notes
 
-1. **TypeScript**: 确保所有新代码都使用 TypeScript 编写，并包含适当的类型定义
+1.  **TypeScript**: Ensure all new code is written in TypeScript and includes appropriate type definitions.
 
-2. **API 集成**:
-   - 所有 API 端点定义在 `src/http/endpoints/` 目录下
-   - 使用 `request` 实例进行 API 调用
+2.  **API Integration**:
+    -   All API endpoints are defined in the `src/http/endpoints/` directory.
+    -   Use the `request` instance for API calls.
 
-3. **支付集成**:
-   - 使用 `OpnPaymentButton` 组件处理支付
-   - 确保正确配置 Opn Payments 公钥
+3.  **Payment Integration**:
+    -   Use the `OpnPaymentButton` component to handle payments.
+    -   Ensure the Opn Payments public key is correctly configured.
 
-### 部署注意事项
+### Deployment Notes
 
-1. **环境变量**:
-   - 确保生产环境正确配置所有必要的环境变量
-   - 不要在代码中硬编码敏感信息
+1.  **Environment Variables**:
+    -   Ensure all necessary environment variables are correctly configured in the production environment.
+    -   Do not hardcode sensitive information in the code.
 
-2. **跨域配置**:
-   - 确保 API 服务器配置了正确的 CORS 策略
-   - 前端部署域名需要在后端白名单中
+2.  **Cross-Origin Configuration**:
+    -   Ensure the API server has the correct CORS policy configured.
+    -   The frontend deployment domain needs to be whitelisted in the backend.
 
-## 浏览器支持
+## Browser Support
 
-- Chrome >= 87
-- Firefox >= 78
-- Safari >= 14
-- Edge >= 88
+-   Chrome >= 87
+-   Firefox >= 78
+-   Safari >= 14
+-   Edge >= 88
 
-## 贡献指南
+## Contribution Guide
 
-1. Fork 项目
-2. 创建特性分支：`git checkout -b feature/xxx`
-3. 提交改动：`git commit -am 'feat: add xxx'`
-4. 推送分支：`git push origin feature/xxx`
-5. 提交 Pull Request
+1.  Fork the project
+2.  Create a feature branch: `git checkout -b feature/xxx`
+3.  Commit your changes: `git commit -am 'feat: add xxx'`
+4.  Push the branch: `git push origin feature/xxx`
+5.  Submit a Pull Request
 
-## 许可证
+## License
 
 MIT

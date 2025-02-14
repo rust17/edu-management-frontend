@@ -1,10 +1,10 @@
 /**
- * 账单状态
+ * Invoice status
  */
 export type InvoiceStatus = 'pending' | 'paid' | 'failed'
 
 /**
- * 账单的状态标签
+ * Status tag for invoice
  */
 interface StatusTag {
   type: 'warning' | 'success' | 'danger' | 'info'
@@ -12,27 +12,27 @@ interface StatusTag {
 }
 
 /**
- * 获取账单状态显示
- * @param status 账单状态
- * @returns 状态显示
+ * Get invoice status display
+ * @param status Invoice status
+ * @returns Status display
  */
 export const getBillStatusTag = (status: InvoiceStatus | undefined): StatusTag => {
   const statusMap: Record<InvoiceStatus, StatusTag> = {
     pending: {
       type: 'warning',
-      label: '待支付'
+      label: 'Pending'
     },
     paid: {
       type: 'success',
-      label: '已支付'
+      label: 'Paid'
     },
     failed: {
       type: 'danger',
-      label: '支付失败'
+      label: 'Failed'
     }
   }
   return status ? statusMap[status] : {
     type: 'info',
-    label: '未知状态'
+    label: 'Unknown status'
   }
 }

@@ -4,17 +4,17 @@ interface ExportColumn<T> {
 }
 
 /**
- * 使用浏览器导出数据为 CSV 文件
- * @param data 要导出的数据数组
- * @param columns 列配置
- * @param filename 文件名（不含扩展名）
+ * Export data to CSV file using browser
+ * @param data Array of data to export
+ * @param columns Column configuration
+ * @param filename Filename (without extension)
  */
 export function exportToCsv<T extends Record<string, any>>(
   data: T[],
   columns: ExportColumn<T>[],
   filename: string
 ): void {
-  // 转换数据格式
+  // Transform data format
   const exportData = data.map(row => {
     const newRow: Record<string, string> = {}
     columns.forEach(col => {
@@ -26,25 +26,25 @@ export function exportToCsv<T extends Record<string, any>>(
     return newRow
   })
 
-  // 生成 CSV 内容
+  // Generate CSV content
   const headers = columns.map(col => col.title)
   const csvContent = [
     headers.join(','),
     ...exportData.map(row =>
       headers.map(header => {
         const cell = row[header]
-        // 处理包含逗号的内容，用引号包裹
+        // Handle cells containing commas by wrapping in quotes
         return cell.includes(',') ? `"${cell}"` : cell
       }).join(',')
     )
   ].join('\n')
 
-  // 创建 Blob 对象
+  // Create Blob object
   const blob = new Blob(['\ufeff' + csvContent], {
     type: 'text/csv;charset=utf-8'
   })
 
-  // 创建下载链接
+  // Create download link
   const link = document.createElement('a')
   link.href = URL.createObjectURL(blob)
   link.download = `${filename}_${new Date().toLocaleDateString()}.csv`

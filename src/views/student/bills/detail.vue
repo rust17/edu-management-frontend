@@ -31,10 +31,10 @@ interface BillDetail {
 const loading = ref(false)
 const billDetail = ref<BillDetail | null>(null)
 
-// 支付相关
+// Payment related
 const payLoading = ref(false)
 
-// 获取账单详情
+// Fetch bill details
 const fetchBillDetail = async () => {
   loading.value = true
   try {
@@ -45,20 +45,20 @@ const fetchBillDetail = async () => {
 
     billDetail.value = response.data.data
   } catch (error) {
-    console.error('获取账单信息失败:', error)
+    console.error('Failed to fetch bill details:', error)
   } finally {
     loading.value = false
   }
 }
 
-// 处理返回
+// Handle back
 const handleBack = () => {
   router.back()
 }
 
-// 处理支付成功
+// Handle payment success
 const handlePaySuccess = async () => {
-  await fetchBillDetail() // 刷新账单详情
+  await fetchBillDetail() // Refresh bill details
 }
 
 onMounted(() => {
@@ -68,14 +68,14 @@ onMounted(() => {
 
 <template>
   <div class="bill-detail" v-loading="loading">
-    <!-- 页面头部 -->
+    <!-- Page header -->
     <div class="page-header">
       <div class="header-left">
         <el-button link @click="handleBack">
           <el-icon><ArrowLeft /></el-icon>
-          返回
+          Back
         </el-button>
-        <h2>账单详情</h2>
+        <h2>Bill Details</h2>
       </div>
       <div class="header-actions">
         <OpnPaymentButton
@@ -84,17 +84,17 @@ onMounted(() => {
           @update:loading="(value) => payLoading = value"
           :invoiceId="billDetail.id"
           :amount="billDetail.amount"
-          :description="`支付账单 ${billDetail.no} - ${billDetail.course.name}`"
+          :description="`Pay bill ${billDetail.no} - ${billDetail.course.name}`"
           @success="handlePaySuccess"
         />
       </div>
     </div>
 
-    <!-- 基本信息 -->
+    <!-- Basic information -->
     <el-card class="info-card" v-if="billDetail">
       <template #header>
         <div class="card-header">
-          <h3>账单信息</h3>
+          <h3>Bill Information</h3>
           <el-tag
             :type="getBillStatusTag(billDetail.status).type"
             size="small"
@@ -104,36 +104,36 @@ onMounted(() => {
         </div>
       </template>
       <el-descriptions :column="2">
-        <el-descriptions-item label="账单编号">
+        <el-descriptions-item label="Bill No.">
           {{ billDetail.no || '-' }}
         </el-descriptions-item>
-        <el-descriptions-item label="账单金额">
+        <el-descriptions-item label="Amount">
           <span class="price">¥{{ billDetail.amount }}</span>
         </el-descriptions-item>
-        <el-descriptions-item label="发送时间">
+        <el-descriptions-item label="Sent At">
           {{ billDetail.send_at }}
         </el-descriptions-item>
-        <el-descriptions-item label="支付时间">
+        <el-descriptions-item label="Paid At">
           {{ billDetail.paid_at || '-' }}
         </el-descriptions-item>
       </el-descriptions>
     </el-card>
 
-    <!-- 课程信息 -->
+    <!-- Course information -->
     <el-card class="course-card" v-if="billDetail">
       <template #header>
         <div class="card-header">
-          <h3>课程信息</h3>
+          <h3>Course Information</h3>
         </div>
       </template>
       <el-descriptions :column="2">
-        <el-descriptions-item label="课程名称">
+        <el-descriptions-item label="Course Name">
           {{ billDetail.course.name }}
         </el-descriptions-item>
-        <el-descriptions-item label="课程年月">
+        <el-descriptions-item label="Year/Month">
           {{ billDetail.course.year_month }}
         </el-descriptions-item>
-        <el-descriptions-item label="任课教师">
+        <el-descriptions-item label="Teacher">
           {{ billDetail.course.teacher_name }}
         </el-descriptions-item>
       </el-descriptions>
@@ -185,7 +185,7 @@ onMounted(() => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .bill-detail {
     .page-header {

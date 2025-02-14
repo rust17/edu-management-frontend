@@ -31,24 +31,24 @@ const courseForm = reactive<CourseForm>({
 
 const rules: FormRules = {
   name: [
-    { required: true, message: '请输入课程名称', trigger: 'blur' },
-    { max: 255, message: '课程名称最多 255 个字符', trigger: 'blur' }
+    { required: true, message: 'Please enter the course name', trigger: 'blur' },
+    { max: 255, message: 'Course name cannot exceed 255 characters', trigger: 'blur' }
   ],
   year_month: [
-    { required: true, message: '请选择年月', trigger: 'change' },
+    { required: true, message: 'Please select year and month', trigger: 'change' },
     {
       pattern: /^\d{4}-\d{2}$/,
-      message: '年月格式必须为YYYY-MM',
+      message: 'Year and month format must be YYYY-MM',
       trigger: 'change'
     }
   ],
   fee: [
-    { required: true, message: '请输入课程费用', trigger: 'blur' },
-    { type: 'number', min: 0, message: '费用不能小于0', trigger: 'blur' }
+    { required: true, message: 'Please enter the course fee', trigger: 'blur' },
+    { type: 'number', min: 0, message: 'Fee cannot be less than 0', trigger: 'blur' }
   ],
   student_ids: [
-    { required: true, message: '请选择学生', trigger: 'change' },
-    { type: 'array', min: 1, message: '至少选择一个学生', trigger: 'change' }
+    { required: true, message: 'Please select students', trigger: 'change' },
+    { type: 'array', min: 1, message: 'Select at least one student', trigger: 'change' }
   ]
 }
 
@@ -57,11 +57,11 @@ interface Student {
   name: string
 }
 
-// 学生列表数据
+// Student list data
 const studentOptions = ref<Student[]>([])
 const studentLoading = ref(false)
 
-// 获取学生列表
+// Get student list
 const fetchStudents = async (keyword?: string) => {
   studentLoading.value = true
   try {
@@ -73,20 +73,20 @@ const fetchStudents = async (keyword?: string) => {
 
     studentOptions.value = response.data.data
   } catch (error) {
-    console.error('获取学生列表失败:', error)
+    console.error('Failed to get student list:', error)
   } finally {
     studentLoading.value = false
   }
 }
 
-// 处理学生搜索
+// Handle student search
 const handleStudentSearch = (query: string) => {
   if (query) {
     fetchStudents(query)
   }
 }
 
-// 处理表单提交
+// Handle form submission
 const handleSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
 
@@ -108,10 +108,10 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
         }
 
         await request(requestConfig)
-        ElMessage.success(isEdit.value ? '课程更新成功' : '课程创建成功')
+        ElMessage.success(isEdit.value ? 'Course updated successfully' : 'Course created successfully')
         router.push('/teacher/courses')
       } catch (error) {
-        console.error(isEdit.value ? '更新课程失败:' : '创建课程失败:', error)
+        console.error(isEdit.value ? 'Failed to update course:' : 'Failed to create course:', error)
       } finally {
         loading.value = false
       }
@@ -119,7 +119,7 @@ const handleSubmit = async (formEl: FormInstance | undefined) => {
   })
 }
 
-// 获取课程详情
+// Get course details
 const fetchCourseDetail = async (id: number) => {
   loading.value = true
   try {
@@ -129,7 +129,7 @@ const fetchCourseDetail = async (id: number) => {
     })
 
     const { data } = response.data
-    // 更新表单数据
+    // Update form data
     Object.assign(courseForm, {
       name: data.name,
       year_month: data.year_month,
@@ -137,24 +137,24 @@ const fetchCourseDetail = async (id: number) => {
       student_ids: data.students.map((student: any) => student.id)
     })
   } catch (error) {
-    console.error('获取课程信息失败:', error)
-    // 获取失败时返回列表页
+    console.error('Failed to get course information:', error)
+    // Redirect to list page if fetching fails
     router.push('/teacher/courses')
   } finally {
     loading.value = false
   }
 }
 
-// 处理取消
+// Handle cancel
 const handleCancel = () => {
   router.back()
 }
 
 onMounted(() => {
-  // 初始加载学生列表
+  // Initial load student list
   fetchStudents()
 
-  // 如果是编辑模式，获取课程详情
+  // If it is edit mode, get course details
   if (isEdit.value) {
     fetchCourseDetail(Number(route.query.id))
   }
@@ -167,9 +167,9 @@ onMounted(() => {
       <div class="header-left">
         <el-button link @click="handleCancel">
           <el-icon><ArrowLeft /></el-icon>
-          返回
+          Back
         </el-button>
-        <h2>{{ isEdit ? '编辑课程' : '创建课程' }}</h2>
+        <h2>{{ isEdit ? 'Edit Course' : 'Create Course' }}</h2>
       </div>
     </div>
 
@@ -181,26 +181,26 @@ onMounted(() => {
         label-position="top"
         :disabled="loading"
       >
-        <el-form-item label="课程名称" prop="name">
+        <el-form-item label="Course Name" prop="name">
           <el-input
             v-model="courseForm.name"
-            placeholder="请输入课程名称"
+            placeholder="Please enter the course name"
             maxlength="255"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="年月" prop="year_month">
+        <el-form-item label="Year/Month" prop="year_month">
           <el-date-picker
             v-model="courseForm.year_month"
             type="month"
-            placeholder="请选择年月"
+            placeholder="Please select year and month"
             format="YYYY-MM"
             value-format="YYYY-MM"
           />
         </el-form-item>
 
-        <el-form-item label="课程费用" prop="fee">
+        <el-form-item label="Course Fee" prop="fee">
           <el-input-number
             v-model="courseForm.fee"
             :min="0"
@@ -212,7 +212,7 @@ onMounted(() => {
           </el-input-number>
         </el-form-item>
 
-        <el-form-item label="选择学生" prop="student_ids">
+        <el-form-item label="Select Students" prop="student_ids">
           <el-select
             v-model="courseForm.student_ids"
             multiple
@@ -220,7 +220,7 @@ onMounted(() => {
             remote
             :remote-method="handleStudentSearch"
             :loading="studentLoading"
-            placeholder="请选择学生"
+            placeholder="Please select students"
             style="width: 100%"
           >
             <el-option
@@ -234,13 +234,13 @@ onMounted(() => {
 
         <el-form-item>
           <div class="form-buttons">
-            <el-button @click="handleCancel">取消</el-button>
+            <el-button @click="handleCancel">Cancel</el-button>
             <el-button
               type="primary"
               :loading="loading"
               @click="handleSubmit(formRef)"
             >
-              {{ isEdit ? '保存' : '创建' }}
+              {{ isEdit ? 'Save' : 'Create' }}
             </el-button>
           </div>
         </el-form-item>
@@ -278,7 +278,7 @@ onMounted(() => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .course-form {
     .form-card {

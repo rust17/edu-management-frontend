@@ -1,4 +1,4 @@
 export const statisEndpoints = {
-  teacher: '/teacher-statistics', // 老师统计
-  student: '/student-statistics' // 学生统计
+  teacher: '/teacher-statistics', // Teacher statistics
+  student: '/student-statistics' // Student statistics
 } as const

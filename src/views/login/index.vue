@@ -25,13 +25,13 @@ const loginForm = reactive<LoginForm>({
 
 const loginRules: FormRules = {
   username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' }
+    { required: true, message: 'Please enter username', trigger: 'blur' }
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' }
+    { required: true, message: 'Please enter password', trigger: 'blur' }
   ],
   role: [
-    { required: true, message: '请选择用户类型', trigger: 'change' }
+    { required: true, message: 'Please select user type', trigger: 'change' }
   ]
 }
 
@@ -63,7 +63,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
 
         router.push('/')
       } catch (error) {
-        // 错误已经被拦截器处理，这里可以不用做额外处理
+        // Errors are already handled by the interceptor, no need for additional handling here
       } finally {
         loading.value = false
       }
@@ -76,20 +76,20 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
   <div class="login-container">
     <div class="login-banner">
       <div class="banner-content">
-        <h1>教务管理系统</h1>
-        <p>高效便捷的教学管理平台</p>
+        <h1>Education Management System</h1>
+        <p>Efficient and convenient teaching management platform</p>
         <div class="feature-list">
           <div class="feature-item">
             <el-icon><Reading /></el-icon>
-            <span>课程管理</span>
+            <span>Course Management</span>
           </div>
           <div class="feature-item">
             <el-icon><Money /></el-icon>
-            <span>账单管理</span>
+            <span>Invoice Management</span>
           </div>
           <div class="feature-item">
             <el-icon><DataAnalysis /></el-icon>
-            <span>数据分析</span>
+            <span>Data Analysis</span>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
       <div class="form-wrapper">
         <div class="form-header">
           <img src="@/assets/logo.svg" alt="logo">
-          <h2>账号登录</h2>
+          <h2>Account Login</h2>
         </div>
 
         <el-form
@@ -107,28 +107,28 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
           :rules="loginRules"
           label-position="top"
         >
-          <el-form-item label="用户名" prop="username">
+          <el-form-item label="Username" prop="username">
             <el-input
               v-model="loginForm.username"
-              placeholder="请输入用户名"
+              placeholder="Enter username"
               :prefix-icon="User"
             />
           </el-form-item>
 
-          <el-form-item label="密码" prop="password">
+          <el-form-item label="Password" prop="password">
             <el-input
               v-model="loginForm.password"
               type="password"
-              placeholder="请输入密码"
+              placeholder="Enter password"
               :prefix-icon="Lock"
               show-password
             />
           </el-form-item>
 
-          <el-form-item label="用户类型" prop="role">
+          <el-form-item label="User Type" prop="role">
             <el-radio-group v-model="loginForm.role">
-              <el-radio-button label="student">学生</el-radio-button>
-              <el-radio-button label="teacher">教师</el-radio-button>
+              <el-radio-button label="student">Student</el-radio-button>
+              <el-radio-button label="teacher">Teacher</el-radio-button>
             </el-radio-group>
           </el-form-item>
 
@@ -139,7 +139,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
               class="login-button"
               @click="handleLogin(formRef)"
             >
-              登录
+              Login
             </el-button>
           </el-form-item>
         </el-form>
@@ -245,7 +245,7 @@ const handleLogin = async (formEl: FormInstance | undefined) => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 992px) {
   .login-container {
     flex-direction: column;

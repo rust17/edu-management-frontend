@@ -20,11 +20,11 @@ const handleToHome = () => {
     <div class="error-content">
       <img src="@/assets/404.svg" alt="404" class="error-image">
       <h1>404</h1>
-      <h2>抱歉，您访问的页面不存在</h2>
-      <p>请检查您输入的网址是否正确</p>
+      <h2>Sorry, the page you visited does not exist</h2>
+      <p>Please check if the URL you entered is correct</p>
       <div class="error-actions">
-        <el-button @click="handleBack">返回上页</el-button>
-        <el-button type="primary" @click="handleToHome">回到首页</el-button>
+        <el-button @click="handleBack">Go Back</el-button>
+        <el-button type="primary" @click="handleToHome">Go to Home</el-button>
       </div>
     </div>
   </div>
@@ -74,7 +74,7 @@ const handleToHome = () => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .error-page {
     .error-content {

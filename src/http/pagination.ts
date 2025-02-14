@@ -1,7 +1,7 @@
 export const DEFAULT_PAGINATION = () => ({
-  currentPage: 1, // 当前页码
-  pageSize: 15, // 每页条数
-  total: 0 // 总数
+  currentPage: 1, // current page
+  pageSize: 15, // page size
+  total: 0 // total
 })
 
 export type PaginationType = ReturnType<typeof DEFAULT_PAGINATION>

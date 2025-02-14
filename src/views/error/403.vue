@@ -20,11 +20,11 @@ const handleToHome = () => {
     <div class="error-content">
       <img src="@/assets/403.svg" alt="403" class="error-image">
       <h1>403</h1>
-      <h2>抱歉，您无权访问该页面</h2>
-      <p>请确认您是否有相应的访问权限</p>
+      <h2>Sorry, you don't have permission to access this page</h2>
+      <p>Please check if you have the appropriate access rights</p>
       <div class="error-actions">
-        <el-button @click="handleBack">返回上页</el-button>
-        <el-button type="primary" @click="handleToHome">回到首页</el-button>
+        <el-button @click="handleBack">Go Back</el-button>
+        <el-button type="primary" @click="handleToHome">Go to Home</el-button>
       </div>
     </div>
   </div>
@@ -74,7 +74,7 @@ const handleToHome = () => {
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .error-page {
     .error-content {
